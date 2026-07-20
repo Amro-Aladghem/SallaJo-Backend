@@ -1,4 +1,5 @@
-﻿using Infrastructure.Data;
+﻿using Application.DTOs.AuthDto;
+using Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +11,16 @@ namespace Application.Services
     public class PersonService
     {
         private readonly AppDbContext _appDbContext;
+        
 
         public PersonService(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
+        }
+
+        public async Task<PersonAuthDto?> Login(PersonAuthDto personAuthDto)
+        {
+
         }
     }
 }
