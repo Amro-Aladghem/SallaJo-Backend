@@ -58,8 +58,8 @@ namespace Application.Services
             Person person = new Person()
             {
                 Phone = personAuthDto.Phone,
-                Password= encryptedPassword,
-                IsActive=false,
+                Password = encryptedPassword,
+                IsActive = false,
             };
 
             await _appDbContext.Persons.AddAsync(person);
@@ -75,6 +75,24 @@ namespace Application.Services
                 IsActive = person.IsActive,
                 UserTypeId = person.UserTypeId
             };
+        }
+
+
+        public async Task<PersonAuthResponseDto?> GetPersonInfoWithReffreshToken(string ReffreshToken)
+        {
+            PersonAuthResponseDto? personAuthResponseDto = await _appDbContext.Persons
+                .Where(P => P.RefreshToken == ReffreshToken && P.ExpiredTokenTime > DateTime.UtcNow)
+                .Select(person => new PersonAuthResponseDto()
+                {
+                    SysId = person.Id.ToString(),
+                    ImageUrl = null,
+                    FullName = "",
+                    IsActive = person.IsActive,
+                    UserTypeId = person.UserTypeId
+                })
+                .FirstOrDefaultAsync();
+
+            return personAuthResponseDto;
         }
     }
 }

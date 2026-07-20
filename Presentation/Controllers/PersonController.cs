@@ -3,19 +3,13 @@ using Application.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace Presentation.Controllers
 {
     [Route("api/v1/persons")]
     [ApiController]
-    public class PersonController:  ControllerBase
+    public class PersonController : ControllerBase
     {
         private readonly PersonService _personService;
         private readonly AuthService _authService;
@@ -26,7 +20,7 @@ namespace Presentation.Controllers
             _authService = authService;
         }
 
-        [HttpGet("login")]
+        [HttpPost("login")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -51,7 +45,7 @@ namespace Presentation.Controllers
             return Ok(new { person });
         }
 
-        [HttpGet("register")]
+        [HttpPost("register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -63,6 +57,38 @@ namespace Presentation.Controllers
                 return Unauthorized(new { message = "فشل انشاء حساب , الرجاء اعادة المحاولة" });
 
             TokenDto tokenDto = await _authService.CreateToken(person.SysId, person.SysId, eUserTypes.Person.ToString());
+
+            Response.Cookies.Append("AuthToken", tokenDto.AuthToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            });
+
+            return Ok(new { person });
+        }
+
+
+        [HttpPost("token/reffresh")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+
+        public async Task<ActionResult> ReffreshToken()
+        {
+            string? token = Request.Cookies["reffreshToken"] ?? null;
+
+            if (string.IsNullOrEmpty(token))
+                return BadRequest(new { message = "Data is missing" });
+
+            var person = await _personService.GetPersonInfoWithReffreshToken(token);
+
+            if (person == null)
+                return Forbid("Token is not valid");
+
+            var tokenDto = await _authService.CreateToken(person.SysId, person.SysId, eUserTypes.Person.ToString());
 
             Response.Cookies.Append("AuthToken", tokenDto.AuthToken, new CookieOptions()
             {
