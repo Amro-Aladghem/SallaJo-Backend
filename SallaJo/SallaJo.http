@@ -1,0 +1,6 @@
+@SallaJo_HostAddress = http://localhost:5068
+
+GET {{SallaJo_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
