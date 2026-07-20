@@ -6,6 +6,9 @@ using System.Text;
 using FluentValidation;
 using System.Reflection;
 using Application.Services;
+using Infrastructure.Data;
+using Npgsql;
+using Microsoft.EntityFrameworkCore;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,6 +41,11 @@ builder.Services.AddValidatorsFromAssembly(typeof(Application.Validators.PersonA
 builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<AuthService>();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration["SQL_CONNECTION_STRING"]);
+});
 
 var app = builder.Build();
 
