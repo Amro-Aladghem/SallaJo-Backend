@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using SallaJo.MiddleWares;
 using System.Text;
+using FluentValidation;
+using System.Reflection;
+using Application.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,8 +33,11 @@ builder.Services.AddAuthentication()
         };
     });
 
+builder.Services.AddValidatorsFromAssembly(typeof(Application.Validators.PersonAuthValidator).Assembly);
 
-
+builder.Services.AddScoped<PersonService>();
+builder.Services.AddScoped<PasswordService>();
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
