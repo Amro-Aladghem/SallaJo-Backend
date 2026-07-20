@@ -9,6 +9,11 @@ namespace Application.Services
 {
     public class PersonService
     {
+        private readonly AppDbContext _appDbContext;
 
+        public PersonService(AppDbContext appDbContext)
+        {
+            _appDbContext = appDbContext;
+        }
     }
 }
