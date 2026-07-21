@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.AuthDto;
+using Application.DTOs.PersonDto;
 using Application.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
@@ -63,6 +64,21 @@ namespace Presentation.Controllers
             return Ok(new { seller });
         }
 
+        [HttpPost("info/initial")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
 
+        public async Task<ActionResult> AddInitialSellerAsManagerInfo(AddInitialPersonInfoDto addInitialPersonInfoDto)
+        {
+            if (UserId is null)
+                return Unauthorized(new { message = "You are not authorized" });
+
+            bool isDone = await _sellerService.HandleCreateSellerForFirstTimeAsManager(UserId.Value, addInitialPersonInfoDto);
+
+            return Ok(new { isDone });
+        }
     }
 }

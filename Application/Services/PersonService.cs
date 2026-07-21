@@ -1,9 +1,11 @@
 ﻿using Application.DTOs.AuthDto;
+using Application.DTOs.PersonDto;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -92,6 +94,20 @@ namespace Application.Services
                 .FirstOrDefaultAsync();
 
             return personAuthResponseDto;
+        }
+
+        public async Task<bool> AddInitialPersonInfo(Guid PersonId,AddInitialPersonInfoDto addInitialPersonInfoDto)
+        {
+            int NumberOfUpdatedRows = await _appDbContext.Persons.Where(P => P.Id == PersonId)
+                .ExecuteUpdateAsync(sp => sp
+                .SetProperty(p => p.FirstName, addInitialPersonInfoDto.FristName)
+                .SetProperty(p => p.LastName, addInitialPersonInfoDto.LastName)
+                .SetProperty(p => p.ImageUrl, addInitialPersonInfoDto.ImageUrl)
+                .SetProperty(p => p.GovernorateId, addInitialPersonInfoDto.GovernorateId)
+                .SetProperty(p => p.CountryId, 1)
+                );
+
+            return NumberOfUpdatedRows>0;
         }
     }
 }

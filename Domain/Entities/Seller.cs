@@ -10,7 +10,7 @@ namespace Domain.Entities
     {
         public Guid Id { get; set; }
         public Guid PersonId { get; set; }
-        public int SellerId { get; set; }
+        public int SellerRoleId { get; set; }
 
         public Person Person { get; set; }
         public SellerRole SellerRole { get; set; }
