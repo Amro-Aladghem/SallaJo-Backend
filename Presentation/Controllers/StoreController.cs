@@ -91,5 +91,21 @@ namespace Presentation.Controllers
 
             return Ok(new { isDone });
         }
+
+        [HttpPut("offer/{id}/status")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> ToggleOfferStatus(Guid id)
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            bool isDone = await _offerService.ToggleOfferStatus(id);
+
+            return Ok(new { isDone });
+        }
     }
 }
