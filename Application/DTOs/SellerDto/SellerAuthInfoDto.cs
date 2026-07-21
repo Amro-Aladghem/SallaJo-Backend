@@ -11,5 +11,6 @@ namespace Application.DTOs.SellerDto
         public Guid Id { get; set; }
         public Guid PersonId { get; set; }
         public int SellerRoleId { get; set; }
+        public Guid StoreId { get; set; }
     }
 }

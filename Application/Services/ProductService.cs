@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Services
 {
@@ -77,12 +79,8 @@ namespace Application.Services
             return NumberOfRowsAffected > 0;
         }
 
-        public async Task<GetProductsPaginatedDto> GetStoreProductsForCustomer(GetProductsPaginatedRequestDto requestDto,Guid StoreId)
+        private async Task<GetProductsPaginatedDto> GetStoreProductsForListing(IQueryable<Product> query,GetProductsPaginatedRequestDto requestDto)
         {
-            var query = _appDbContext.Products
-                .Where(p => p.IsAcceptedToAppear == true && p.IsDeleted == false
-                    &&p.StoreId==StoreId);
-
             if (requestDto.LastSequenceProductNumber.HasValue)
             {
                 query = query.Where(p => p.SequenceNumber < requestDto.LastSequenceProductNumber.Value);
@@ -97,7 +95,7 @@ namespace Application.Services
                     Name = p.Name,
                     Price = p.Price,
                     PrimaryImageLink = p.PrimaryImageLink,
-                    Description = p.Description.Substring(0,20),
+                    Description = p.Description.Substring(0, 20),
                     SequenceProductNumber = p.SequenceNumber
                 })
                 .ToListAsync();
@@ -109,6 +107,24 @@ namespace Application.Services
                 Products = products,
                 LastSequenceProductNumber = LastSequenceProductNumber
             };
+        }
+
+        public async Task<GetProductsPaginatedDto> GetStoreProductsForCustomer(GetProductsPaginatedRequestDto requestDto,string storeSlug)
+        {
+            var query = _appDbContext.Products
+                .Where(p => p.IsAcceptedToAppear == true && p.IsDeleted == false
+                    &&p.Store.Slug==storeSlug);
+
+            return await GetStoreProductsForListing(query, requestDto);
+        }
+
+        public async Task<GetProductsPaginatedDto> GetStoreProductsForSeller(GetProductsPaginatedRequestDto requestDto, Guid StoreId)
+        {
+            var query = _appDbContext.Products
+                .Where(p => p.IsAcceptedToAppear == true && p.IsDeleted == false
+                    && p.StoreId==StoreId);
+
+            return await GetStoreProductsForListing(query, requestDto);
         }
 
         public async Task<bool> HandleAddProduct(Guid StoreId, AddProductDto addProductDto)

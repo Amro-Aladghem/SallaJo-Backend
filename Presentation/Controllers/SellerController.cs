@@ -105,5 +105,6 @@ namespace Presentation.Controllers
             bool isDone = await _sellerService.HandleUpdateSellerInfo(updatePersonDto,UserId.Value);
             return Ok(new { isDone });
         }
+
     }
 }
