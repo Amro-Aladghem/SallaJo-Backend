@@ -59,6 +59,24 @@ namespace Application.Services
             return NumberOfRowsAffected > 0;
         }
 
+        public async Task<bool> ToggleAppearStatus(Guid productId)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Products
+                .Where(p => p.Id == productId)
+                .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.IsAcceptedToAppear, p => !p.IsAcceptedToAppear));
+
+            return NumberOfRowsAffected > 0;
+        }
+
+        public async Task<bool> DeleteProduct(Guid productId)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Products
+                .Where(p => p.Id == productId)
+                .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.IsDeleted, true));
+
+            return NumberOfRowsAffected > 0;
+        }
+
         public async Task<bool> HandleAddProduct(Guid StoreId, AddProductDto addProductDto)
         {
             await using (var transaction = await _appDbContext.Database.BeginTransactionAsync())
