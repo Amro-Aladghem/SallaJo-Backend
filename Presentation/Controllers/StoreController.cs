@@ -65,6 +65,7 @@ namespace Presentation.Controllers
             return Ok(new { store });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpGet("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -97,6 +98,7 @@ namespace Presentation.Controllers
             return Ok(new { store });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -112,6 +114,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPost("offer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -129,6 +132,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("offer/{id}/status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -156,6 +160,7 @@ namespace Presentation.Controllers
             return Ok(new { offers });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("offers/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -172,6 +177,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpGet("offers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -199,6 +205,7 @@ namespace Presentation.Controllers
             return Ok(new { result });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpGet("products")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

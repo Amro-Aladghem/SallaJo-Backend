@@ -95,6 +95,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpGet("me")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -113,6 +114,7 @@ namespace Presentation.Controllers
             return Ok(new { seller });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
