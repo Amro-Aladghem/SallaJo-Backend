@@ -15,15 +15,15 @@ namespace Presentation.Controllers
     [ApiController]
     public class StoreController : BaseApiController
     {
-        private readonly BlobStorageUploadService _storageUploadService;    
-        private readonly StoreService _storeService;    
+        private readonly BlobStorageUploadService _storageUploadService;
+        private readonly StoreService _storeService;
 
         public StoreController(BlobStorageUploadService storageUploadService, StoreService storeService)
         {
             _storageUploadService = storageUploadService;
             _storeService = storeService;
         }
-       
+
 
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -32,7 +32,7 @@ namespace Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
-        public async Task<ActionResult> CreateStoreWithInitialInformation([FromForm]AddInitialStoreInfoDto addInitialStoreInfoDto,
+        public async Task<ActionResult> CreateStoreWithInitialInformation([FromForm] AddInitialStoreInfoDto addInitialStoreInfoDto,
             IFormFile Image)
         {
             string? UploadedImageUrl = null;
@@ -44,7 +44,7 @@ namespace Presentation.Controllers
             {
                 using (var stream = Image.OpenReadStream())
                 {
-                    UploadedImageUrl = await _storageUploadService.UploadAsync(stream, Image.FileName,addInitialStoreInfoDto.SellerId);
+                    UploadedImageUrl = await _storageUploadService.UploadAsync(stream, Image.FileName, addInitialStoreInfoDto.SellerId);
                 }
             }
 
@@ -55,5 +55,19 @@ namespace Presentation.Controllers
             return Ok(new { store });
         }
 
+        [HttpPut("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> UpdateStoreInfo([FromForm] UpdateStoreInfoDto updateStoreInfoDto,Guid id)
+        {
+            if (UserId is null)
+                return Unauthorized();
+
+            bool isDone = await _storeService.UpdateStoreInfo(updateStoreInfoDto,id);
+            return Ok(new { isDone });
+        }
     }
 }

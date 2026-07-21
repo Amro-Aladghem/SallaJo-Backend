@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.StoreDto;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,26 @@ namespace Application.Services
                 LogoImageUrl = store.LogoImageUrl,
                 SellerId = store.SellerId,
             };
+        }
+
+        public async Task<bool> UpdateStoreInfo(UpdateStoreInfoDto updateStoreInfoDto,Guid StoreId)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Stores.ExecuteUpdateAsync(
+                sp => sp.SetProperty(p => p.Name, updateStoreInfoDto.Name)
+                .SetProperty(p => p.LogoImageUrl, updateStoreInfoDto.LogoImageUrl)
+                .SetProperty(p => p.PrimaryColorId, updateStoreInfoDto.PrimaryColorId)
+                .SetProperty(p => p.SecondaryColorId, updateStoreInfoDto.SecondaryColorId)
+                .SetProperty(p => p.Description, updateStoreInfoDto.Description)
+                .SetProperty(p => p.GovernorateId, updateStoreInfoDto.GovernorateId)
+                .SetProperty(p => p.PhoneNumber, updateStoreInfoDto.PhoneNumber)
+                .SetProperty(p => p.Email, updateStoreInfoDto.Email)
+                .SetProperty(p => p.FacebookLink, updateStoreInfoDto.FacebookLink)
+                .SetProperty(p => p.InstagramLink, updateStoreInfoDto.InstagramLink)
+                .SetProperty(p => p.WelcomeHeaderText, updateStoreInfoDto.WelcomeHeaderText)
+                .SetProperty(p => p.CoverStoreImageLink, updateStoreInfoDto.CoverStoreImageLink)
+            );
+
+            return NumberOfRowsAffected>0;
         }
     }
 }
