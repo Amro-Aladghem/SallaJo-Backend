@@ -43,7 +43,7 @@ namespace Application.Services
             return new PersonAuthResponseDto()
             {
 
-                SysId = person.Id.ToString(),
+                SysId = person.Id,
                 ImageUrl = person.ImageUrl,
                 FullName = person.FirstName + ' ' + person.LastName,
                 IsActive = person.IsActive,
@@ -69,7 +69,7 @@ namespace Application.Services
 
             return new PersonAuthResponseDto()
             {
-                SysId = person.Id.ToString(),
+                SysId = person.Id,
                 ImageUrl = null,
                 FullName = "",
                 IsActive = person.IsActive,
@@ -83,7 +83,7 @@ namespace Application.Services
                 .Where(P => P.RefreshToken == ReffreshToken && P.ExpiredTokenTime > DateTime.UtcNow)
                 .Select(person => new PersonAuthResponseDto()
                 {
-                    SysId = person.Id.ToString(),
+                    SysId = person.Id,
                     ImageUrl = null,
                     FullName = "",
                     IsActive = person.IsActive,

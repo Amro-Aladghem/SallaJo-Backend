@@ -41,6 +41,7 @@ builder.Services.AddValidatorsFromAssembly(typeof(Application.Validators.PersonA
 builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<SellerService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
