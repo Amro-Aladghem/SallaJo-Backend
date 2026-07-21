@@ -27,4 +27,5 @@ public class AppDbContext : DbContext
     public DbSet<Store> Stores { get; set; }
     public DbSet<Subscription> Subscriptions { get; set; }
     public DbSet<UserType> UserTypes { get; set; }
+    public DbSet<Seller> Sellers { get; set; }
 }

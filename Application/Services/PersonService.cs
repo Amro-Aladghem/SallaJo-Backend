@@ -77,7 +77,6 @@ namespace Application.Services
             };
         }
 
-
         public async Task<PersonAuthResponseDto?> GetPersonInfoWithReffreshToken(string ReffreshToken)
         {
             PersonAuthResponseDto? personAuthResponseDto = await _appDbContext.Persons
