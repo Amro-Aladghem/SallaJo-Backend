@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.AuthDto;
 using Application.DTOs.PersonDto;
+using Application.DTOs.ProductDto;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -123,5 +124,6 @@ namespace Application.Services
 
             return NumberOfRowsAffected > 0;
         }
+
     }
 }

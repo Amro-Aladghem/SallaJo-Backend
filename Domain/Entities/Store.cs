@@ -23,6 +23,8 @@ public class Store
 
     public bool IsCompletedStoreProfile;
 
+    public bool IsAcceptedToShowStoke;
+
     public Color? PrimaryColor { get; set; }
     public Color? SecondaryColor { get; set; }
     public Country? Country { get; set; }

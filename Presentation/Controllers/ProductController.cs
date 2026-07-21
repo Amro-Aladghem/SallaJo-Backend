@@ -28,6 +28,31 @@ namespace Presentation.Controllers
 
       
 
+        [HttpGet("show")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> GetProductsForCustomer([FromQuery] GetProductsPaginatedRequestDto requestDto)
+        {
+            var result = await _productService.GetProductsForCustomer(requestDto);
+
+            return Ok(new { result.Products, result.LastSequenceProductNumber });
+        }
+
+        [HttpGet("{id}/public")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> GetProductFullInfoForCustomer(Guid id)
+        {
+            var product = await _productService.GetProductFullInfoForCustomer(id);
+
+            if (product is null)
+                return NotFound();
+
+            return Ok(new { product });
+        }
+
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

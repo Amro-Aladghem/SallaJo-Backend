@@ -109,6 +109,45 @@ namespace Application.Services
             };
         }
 
+        public async Task<ProductFullInfoForCustomerDto?> GetProductFullInfoForCustomer(Guid productId)
+        {
+            var now = DateTime.UtcNow;
+
+            return await _appDbContext.Products
+                .Where(p => p.Id == productId && p.IsAcceptedToAppear == true && p.IsDeleted == false)
+                .Select(p => new ProductFullInfoForCustomerDto
+                {
+                    Id = p.Id,
+                    StoreId = p.StoreId,
+                    StoreName = p.Store.Name,
+                    StoreImageLink = p.Store.LogoImageUrl,
+                    IsAcceptToShowTheStock=p.Store.IsAcceptedToShowStoke,
+                    Name = p.Name,
+                    Price = p.Price,
+                    PrimaryImageLink = p.PrimaryImageLink,
+                    Description = p.Description,
+                    Stoke=p.Stock.Value,
+                    AmountOfDiscount = p.Discounts
+                        .Where(d => d.IsActive == true && d.EndDate >= now && now>=d.StartDate)
+                        .Select(d => d.DiscountAmount)
+                        .FirstOrDefault(),
+                    Images = p.ProductImages.Select(pi => new ProductImageDto
+                    {
+                        ImageLink = pi.ImageLink,
+                        Id = pi.Id
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<GetProductsPaginatedDto> GetProductsForCustomer(GetProductsPaginatedRequestDto requestDto)
+        {
+            var query = _appDbContext.Products
+                .Where(p => p.IsAcceptedToAppear == true && p.IsDeleted == false);
+
+            return await GetStoreProductsForListing(query, requestDto);
+        }
+
         public async Task<GetProductsPaginatedDto> GetStoreProductsForCustomer(GetProductsPaginatedRequestDto requestDto,string storeSlug)
         {
             var query = _appDbContext.Products
