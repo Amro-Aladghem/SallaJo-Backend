@@ -3,8 +3,9 @@ namespace Domain.Entities;
 public class Store
 {
     public Guid Id { get; set; }
+    public Guid SellerId { get; set; }
     public string Name { get; set; } = null!;
-    public string LogoImageUrl { get; set; } = null!;
+    public string? LogoImageUrl { get; set; } = null!;
     public int? PrimaryColorId { get; set; }
     public int? SecondaryColorId { get; set; }
     public string? Description { get; set; }
@@ -16,9 +17,11 @@ public class Store
     public string? Email { get; set; }
     public string? FacebookLink { get; set; }
     public string? InstagramLink { get; set; }
-    public string WelcomeHeaderText { get; set; } = null!;
+    public string? WelcomeHeaderText { get; set; } = null!;
     public string? CoverStoreImageLink { get; set; }
-    public string Slug { get; set; } = null!;
+    public string? Slug { get; set; } = null!;
+
+    public bool IsCompletedStoreProfile;
 
     public Color? PrimaryColor { get; set; }
     public Color? SecondaryColor { get; set; }
@@ -27,4 +30,5 @@ public class Store
     public ICollection<Product> Products { get; set; } = new List<Product>();
     public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
     public ICollection<ActivationCode> ActivationCodes { get; set; } = new List<ActivationCode>();
+    public Seller Seller { get; set; }
 }

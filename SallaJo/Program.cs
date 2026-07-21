@@ -9,6 +9,7 @@ using Application.Services;
 using Infrastructure.Data;
 using Npgsql;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.ExternalServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,8 @@ builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<SellerService>();
+builder.Services.AddScoped<SellerService>();
+builder.Services.AddScoped<BlobStorageUploadService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
