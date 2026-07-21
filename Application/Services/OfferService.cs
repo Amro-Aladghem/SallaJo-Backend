@@ -16,9 +16,10 @@ namespace Application.Services
         private readonly AppDbContext _appDbContext;
         private readonly OfferProductService _offerProductService;
 
-        public OfferService(AppDbContext appDbContext)
+        public OfferService(AppDbContext appDbContext, OfferProductService offerProductService)
         { 
-            _appDbContext = appDbContext; 
+            _appDbContext = appDbContext;
+            _offerProductService = offerProductService;
         }
 
         private async Task<Guid?> AddOffer(Guid StoreId,AddOfferDto addOfferDto)
