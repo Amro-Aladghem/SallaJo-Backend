@@ -7,37 +7,33 @@ using System.Threading.Tasks;
 
 namespace Application.DTOs.StoreDto
 {
-    public class UpdateStoreInfoDto
+    public class StoreInfoForSellerDto
     {
-        [Required]
         public string Name { get; set; }
 
-        [Required]
         public string LogoImageUrl { get; set; }
 
-        [Required]
         public int PrimaryColorId { get; set; }
 
-        [Required]
         public int SecondaryColorId { get; set; }
 
-        [Required]
         public string Description { get; set; }
 
-        [Required]
         public int GovernorateId { get; set; }
 
-        [Required]
         public string PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? FacebookLink { get; set; }
         public string? InstagramLink { get; set; }
 
-        [Required]
         public string? WelcomeHeaderText { get; set; }
-
-        [Required]
         public string? CoverStoreImageLink { get; set; }
+
+        public bool? IsActivatedStore { get; set; }
+        public int? CountryId { get; set; }
+        public string? Slug { get; set; } = null!;
+
+        public bool IsCompletedStoreProfile { get; set; }
 
         public bool IsAcceptedToShowStoke { get; set; }
     }

@@ -64,9 +64,37 @@ namespace Application.Services
                 .SetProperty(p => p.InstagramLink, updateStoreInfoDto.InstagramLink)
                 .SetProperty(p => p.WelcomeHeaderText, updateStoreInfoDto.WelcomeHeaderText)
                 .SetProperty(p => p.CoverStoreImageLink, updateStoreInfoDto.CoverStoreImageLink)
+                .SetProperty(p => p.IsAcceptedToShowStoke, updateStoreInfoDto.IsAcceptedToShowStoke)
             );
 
             return NumberOfRowsAffected>0;
+        }
+
+        public async Task<StoreInfoForSellerDto?> GetStoreInfoForSeller(Guid storeId)
+        {
+            return await _appDbContext.Stores
+                .Where(s => s.Id == storeId)
+                .Select(s => new StoreInfoForSellerDto
+                {
+                    Name = s.Name,
+                    LogoImageUrl = s.LogoImageUrl!,
+                    PrimaryColorId = s.PrimaryColorId ?? 1,
+                    SecondaryColorId = s.SecondaryColorId ?? 1,
+                    Description = s.Description!,
+                    GovernorateId = s.GovernorateId ?? 1,
+                    PhoneNumber = s.PhoneNumber!,
+                    Email = s.Email,
+                    FacebookLink = s.FacebookLink,
+                    InstagramLink = s.InstagramLink,
+                    WelcomeHeaderText = s.WelcomeHeaderText,
+                    CoverStoreImageLink = s.CoverStoreImageLink,
+                    IsActivatedStore = s.IsActivatedStore,
+                    CountryId = s.CountryId,
+                    Slug = s.Slug,
+                    IsCompletedStoreProfile = s.IsCompletedStoreProfile,
+                    IsAcceptedToShowStoke = s.IsAcceptedToShowStoke
+                })
+                .FirstOrDefaultAsync();
         }
 
         public async Task<Guid> GetStoreIdBySellerId(Guid SellerId)
