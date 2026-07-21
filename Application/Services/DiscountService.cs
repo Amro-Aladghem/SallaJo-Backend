@@ -42,8 +42,7 @@ namespace Application.Services
             var now = DateTime.UtcNow;
 
             return await _appDbContext.Discounts
-                .Include(d => d.Product)
-                .Where(d => d.IsActive == true && d.EndDate >= now)
+                .Where(d => d.IsActive == true && d.EndDate >= now && d.StartDate<=now)
                 .Select(d => new DiscountShortInfoDto
                 {
                     DiscountAmount = d.DiscountAmount,
@@ -65,7 +64,6 @@ namespace Application.Services
         public async Task<List<DiscountInfoDto>> GetAllDiscounts()
         {
             return await _appDbContext.Discounts
-                .Include(d => d.Product)
                 .Select(d => new DiscountInfoDto
                 {
                     Id = d.Id,
@@ -84,6 +82,13 @@ namespace Application.Services
                     }
                 })
                 .ToListAsync();
+        }
+
+        public async Task<bool> ProductHasActiveDiscount(Guid productId)
+        {
+            var now = DateTime.UtcNow;
+            return await _appDbContext.Discounts
+                .AnyAsync(d => d.ProductId == productId && d.IsActive == true && d.EndDate >= now);
         }
 
         public async Task<bool> ToggleDiscountStatus(Guid discountId)

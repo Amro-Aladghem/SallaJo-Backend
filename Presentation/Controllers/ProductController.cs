@@ -151,10 +151,16 @@ namespace Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult> AddDiscount(AddDiscountDto addDiscountDto, Guid productId)
         {
             if (UserId is null || StoreId is null)
                 return Unauthorized();
+
+            bool hasActiveDiscount = await _discountService.ProductHasActiveDiscount(productId);
+
+            if (hasActiveDiscount)
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = "Product already has an active discount" });
 
             bool isDone = await _discountService.AddDiscount(addDiscountDto, productId);
 
