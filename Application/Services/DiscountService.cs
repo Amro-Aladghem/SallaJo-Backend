@@ -37,6 +37,31 @@ namespace Application.Services
             return await _appDbContext.SaveChangesAsync() > 0;
         }
 
+        public async Task<List<DiscountShortInfoDto>> GetActiveDiscounts()
+        {
+            var now = DateTime.UtcNow;
+
+            return await _appDbContext.Discounts
+                .Include(d => d.Product)
+                .Where(d => d.IsActive == true && d.EndDate >= now)
+                .Select(d => new DiscountShortInfoDto
+                {
+                    DiscountAmount = d.DiscountAmount,
+                    LeastAmountNumber = d.LeastAmountNumber,
+                    StartDate = d.StartDate,
+                    EndDate = d.EndDate,
+                    Product = new ProductSimpleInfoDto
+                    {
+                        Id = d.Product.Id,
+                        Name = d.Product.Name,
+                        Price = d.Product.Price,
+                        PrimaryImageLink = d.Product.PrimaryImageLink,
+                        Description = d.Product.Description,
+                    }
+                })
+                .ToListAsync();
+        }
+
         public async Task<List<DiscountInfoDto>> GetAllDiscounts()
         {
             return await _appDbContext.Discounts
