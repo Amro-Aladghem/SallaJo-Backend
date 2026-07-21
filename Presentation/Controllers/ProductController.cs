@@ -14,11 +14,11 @@ namespace Presentation.Controllers
     [ApiController]
     public class ProductController : BaseApiController
     {
-        private readonly ProductService _productService;
+        private readonly DiscountService _discountService;
 
-        public ProductController(ProductService productService)
+        public ProductController(DiscountService discountService)
         {
-            _productService = productService;
+            _discountService = discountService;
         }
 
         [HttpPost("{productId}/discounts")]
@@ -31,7 +31,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _productService.AddDiscount(addDiscountDto,productId);
+            bool isDone = await _discountService.AddDiscount(addDiscountDto, productId);
 
             return Ok(new { isDone });
         }
@@ -46,7 +46,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _productService.ToggleDiscountStatus(discountId);
+            bool isDone = await _discountService.ToggleDiscountStatus(discountId);
 
             return Ok(new { isDone });
         }
