@@ -68,5 +68,14 @@ namespace Application.Services
 
             return NumberOfRowsAffected>0;
         }
+
+        public async Task<Guid> GetStoreIdBySellerId(Guid SellerId)
+        {
+            Guid StoreId = await _appDbContext.Stores.Where(S => S.SellerId == SellerId)
+                .Select(S => S.Id)
+                .FirstAsync();
+
+            return StoreId;
+        }
     }
 }

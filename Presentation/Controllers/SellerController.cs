@@ -20,11 +20,13 @@ namespace Presentation.Controllers
     {
         private readonly SellerService _sellerService;
         private readonly AuthService _authService;
+        private readonly StoreService _storeService;
 
-        public SellerController(SellerService sellerService, AuthService authService)
+        public SellerController(SellerService sellerService, AuthService authService, StoreService storeService)
         {
             _sellerService = sellerService;
             _authService = authService;
+            _storeService = storeService;
         }
 
         [HttpGet("info/auth")]
@@ -44,7 +46,10 @@ namespace Presentation.Controllers
             if (seller is null)
                 return NotFound("seller user was not found");
 
-            var tokenDto = await _authService.CreateToken(seller.PersonId, seller.Id, eUserTypes.Seller.ToString());
+            Guid? StoreId = await _storeService.GetStoreIdBySellerId(seller.Id);
+
+            var tokenDto = await _authService.CreateToken(seller.PersonId, seller.Id, eUserTypes.Seller.ToString()
+                ,StoreId);
 
             Response.Cookies.Append("AuthToken", tokenDto.AuthToken, new CookieOptions()
             {
