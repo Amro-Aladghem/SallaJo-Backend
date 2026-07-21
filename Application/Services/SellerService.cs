@@ -62,6 +62,11 @@ namespace Application.Services
             return true;
         }
 
+        public async Task<PersonInfoDto?> GetSellerInfo(Guid personId)
+        {
+            return await _personService.GetPersonInfo(personId);
+        }
+
         public async Task<bool> HandleUpdateSellerInfo(UpdatePersonDto updatePersonDto,Guid SellerId)
         {
             Guid PersonId = await _appDbContext.Sellers.Where(s=>s.Id==SellerId)

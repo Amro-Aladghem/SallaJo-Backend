@@ -92,6 +92,24 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [HttpGet("me")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> GetSellerInfo()
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            var seller = await _sellerService.GetSellerInfo(UserId.Value);
+
+            if (seller is null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message="Failed to get data!" });
+
+            return Ok(new { seller });
+        }
+
         [HttpPut("info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

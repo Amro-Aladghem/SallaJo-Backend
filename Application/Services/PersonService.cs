@@ -2,6 +2,7 @@
 using Application.DTOs.PersonDto;
 using Application.DTOs.ProductDto;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -125,5 +126,22 @@ namespace Application.Services
             return NumberOfRowsAffected > 0;
         }
 
+        public async Task<PersonInfoDto?> GetPersonInfo(Guid personId)
+        {
+            return await _appDbContext.Persons
+                .Where(p => p.Id == personId)
+                .Select(p => new PersonInfoDto
+                {
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Email = p.Email,
+                    ImageUrl = p.ImageUrl,
+                    Phone = p.Phone,
+                    UserRole = p.UserTypeId == (int)eUserTypes.Person
+                        ? eUserTypes.Person.ToString()
+                        : eUserTypes.Seller.ToString()
+                })
+                .FirstOrDefaultAsync();
+        }
     }
 }
