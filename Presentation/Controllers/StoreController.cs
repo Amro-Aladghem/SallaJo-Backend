@@ -81,6 +81,20 @@ namespace Presentation.Controllers
             return Ok(new { store });
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> GetStoreInfoForCustomer(string slug)
+        {
+            var store = await _storeService.GetStoreInfoForCustomer(slug);
+
+            if (store is null)
+                return NotFound();
+
+            return Ok(new { store });
+        }
+
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

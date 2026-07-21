@@ -97,6 +97,26 @@ namespace Application.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<StoreInfoForCustomerDto?> GetStoreInfoForCustomer(string slug)
+        {
+            return await _appDbContext.Stores
+                .Where(s => s.Slug == slug && s.IsActivatedStore == true)
+                .Select(s => new StoreInfoForCustomerDto
+                {
+                    Name = s.Name,
+                    LogoImageUrl = s.LogoImageUrl!,
+                    Description = s.Description!,
+                    GovernorateId = s.GovernorateId ?? 0,
+                    PhoneNumber = s.PhoneNumber!,
+                    Email = s.Email,
+                    FacebookLink = s.FacebookLink,
+                    InstagramLink = s.InstagramLink,
+                    CountryId = s.CountryId,
+                    Slug = s.Slug
+                })
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<Guid> GetStoreIdBySellerId(Guid SellerId)
         {
             Guid StoreId = await _appDbContext.Stores.Where(S => S.SellerId == SellerId)
