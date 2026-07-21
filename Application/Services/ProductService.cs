@@ -166,6 +166,36 @@ namespace Application.Services
             return await GetStoreProductsForListing(query, requestDto);
         }
 
+        public async Task<GetProductFullInfoForSellerDto?> GetProductFullInfoForSeller(Guid productId)
+        {
+            var now = DateTime.UtcNow;
+
+            return await _appDbContext.Products
+                .Where(p => p.Id == productId)
+                .Select(p => new GetProductFullInfoForSellerDto
+                {
+                    Id = p.Id,
+                    StoreId = p.StoreId,
+                    Name = p.Name,
+                    Price = p.Price,
+                    PrimaryImageLink = p.PrimaryImageLink,
+                    Description = p.Description,
+                    Stock = p.Stock,
+                    IsDeleted = p.IsDeleted,
+                    IsAcceptedToAppear = p.IsAcceptedToAppear,
+                    AmountOfDiscount = p.Discounts
+                        .Where(d => d.IsActive == true && d.EndDate >= now && now >= d.StartDate)
+                        .Select(d => d.DiscountAmount)
+                        .FirstOrDefault(),
+                    Images = p.ProductImages.Select(pi => new ProductImageDto
+                    {
+                        ImageLink = pi.ImageLink,
+                        Id = pi.Id
+                    }).ToList()
+                })
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<bool> HandleAddProduct(Guid StoreId, AddProductDto addProductDto)
         {
             await using (var transaction = await _appDbContext.Database.BeginTransactionAsync())

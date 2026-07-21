@@ -53,6 +53,24 @@ namespace Presentation.Controllers
             return Ok(new { product });
         }
 
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> GetProductFullInfoForSeller(Guid id)
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            var product = await _productService.GetProductFullInfoForSeller(id);
+
+            if (product is null)
+                return NotFound();
+
+            return Ok(new { product });
+        }
+
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

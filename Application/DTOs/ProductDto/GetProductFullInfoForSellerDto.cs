@@ -19,7 +19,7 @@ namespace Application.DTOs.ProductDto
 
         public decimal? AmountOfDiscount = null;
 
-        public int Stock;
+        public int? Stock { get; set; }
         public bool? IsDeleted { get; set; }
         public bool? IsAcceptedToAppear { get; set; }
 
