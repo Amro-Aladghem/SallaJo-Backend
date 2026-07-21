@@ -60,6 +60,8 @@ app.UseMiddleware<GlobalExeptionMidlleWare>();
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<JwtFromCookieMiddleware>();
+
 app.UseAuthentication();
 
 app.UseAuthorization();
