@@ -35,5 +35,20 @@ namespace Presentation.Controllers
 
             return Ok(new { isDone });
         }
+
+        [HttpPut("{id}/discounts/{discountId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> ToggleDiscountStatus(Guid id, Guid discountId)
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            bool isDone = await _productService.ToggleDiscountStatus(discountId);
+
+            return Ok(new { isDone });
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.DiscountDto;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,15 @@ namespace Application.Services
             await _appDbContext.Discounts.AddAsync(discount);
 
             return await _appDbContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> ToggleDiscountStatus(Guid discountId)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Discounts
+                .Where(d => d.Id == discountId)
+                .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.IsActive, p => !p.IsActive));
+
+            return NumberOfRowsAffected > 0;
         }
     }
 }
