@@ -153,18 +153,31 @@ namespace Presentation.Controllers
             return Ok(new { offers });
         }
 
+        [HttpGet("{slug}/products")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> GetProductsForCustomer([FromQuery] GetProductsPaginatedRequestDto requestDto,string slug)
+        {
+            
+            var result = await _productService.GetStoreProductsForCustomer(requestDto, slug);
+
+            return Ok(new { result });
+        }
+
         [HttpGet("products")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> GetProductsForCustomer([FromQuery] GetProductsPaginatedRequestDto requestDto)
+        public async Task<ActionResult> GetProductsForSeller([FromQuery] GetProductsPaginatedRequestDto requestDto)
         {
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            var result = await _productService.GetStoreProductsForCustomer(requestDto, StoreId.Value);
+            var result = await _productService.GetStoreProductsForSeller(requestDto, StoreId.Value);
 
             return Ok(new { result });
         }
+
     }
 }

@@ -97,7 +97,7 @@ namespace Application.Services
                     Name = p.Name,
                     Price = p.Price,
                     PrimaryImageLink = p.PrimaryImageLink,
-                    Description = p.Description,
+                    Description = p.Description.Substring(0,20),
                     SequenceProductNumber = p.SequenceNumber
                 })
                 .ToListAsync();

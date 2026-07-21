@@ -48,6 +48,11 @@ namespace Presentation.Controllers
 
             Guid? StoreId = await _storeService.GetStoreIdBySellerId(seller.Id);
 
+            if (StoreId is null)
+                return Unauthorized("You are not authorized user");
+
+            seller.StoreId = StoreId.Value;
+
             var tokenDto = await _authService.CreateToken(seller.PersonId, seller.Id, eUserTypes.Seller.ToString()
                 ,StoreId);
 
