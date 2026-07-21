@@ -54,6 +54,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration["SQL_CONNECTION_STRING"]);
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("PersonRole", policy =>
+    {
+        policy.RequireRole("person", "Person");
+    });
+
+    options.AddPolicy("SellerRole", policy =>
+    {
+        policy.RequireRole("seller", "Seller");
+    });
+});
+
 var app = builder.Build();
 
 
