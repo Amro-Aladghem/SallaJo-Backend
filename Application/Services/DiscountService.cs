@@ -1,4 +1,5 @@
 using Application.DTOs.DiscountDto;
+using Application.DTOs.ProductDto;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,30 @@ namespace Application.Services
             await _appDbContext.Discounts.AddAsync(discount);
 
             return await _appDbContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<List<DiscountInfoDto>> GetAllDiscounts()
+        {
+            return await _appDbContext.Discounts
+                .Include(d => d.Product)
+                .Select(d => new DiscountInfoDto
+                {
+                    Id = d.Id,
+                    StartDate = d.StartDate,
+                    EndDate = d.EndDate,
+                    IsActive = d.IsActive,
+                    DiscountAmount = d.DiscountAmount,
+                    LeastAmountNumber = d.LeastAmountNumber,
+                    Product = new ProductSimpleInfoDto
+                    {
+                        Id = d.Product.Id,
+                        Name = d.Product.Name,
+                        Price = d.Product.Price,
+                        PrimaryImageLink = d.Product.PrimaryImageLink,
+                        Description = d.Product.Description,
+                    }
+                })
+                .ToListAsync();
         }
 
         public async Task<bool> ToggleDiscountStatus(Guid discountId)
