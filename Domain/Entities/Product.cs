@@ -12,6 +12,7 @@ public class Product
     public int? NumberOfOrders { get; set; }
     public string PrimaryImageLink { get; set; } = null!;
     public bool? IsDeleted { get; set; }
+    public int SequenceNumber { get; set; }
 
     public Store Store { get; set; } = null!;
     public IList<ProductImage> ProductImages { get; set; } = new List<ProductImage>();

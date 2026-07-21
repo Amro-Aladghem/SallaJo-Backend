@@ -13,5 +13,6 @@ namespace Application.DTOs.ProductDto
         public decimal? Price { get; set; }
         public string PrimaryImageLink { get; set; } = null!;
         public string Description { get; set; } = null!;
+        public int? SequenceProductNumber = null;
     }
 }

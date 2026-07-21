@@ -77,6 +77,40 @@ namespace Application.Services
             return NumberOfRowsAffected > 0;
         }
 
+        public async Task<GetProductsPaginatedDto> GetStoreProductsForCustomer(GetProductsPaginatedRequestDto requestDto,Guid StoreId)
+        {
+            var query = _appDbContext.Products
+                .Where(p => p.IsAcceptedToAppear == true && p.IsDeleted == false
+                    &&p.StoreId==StoreId);
+
+            if (requestDto.LastSequenceProductNumber.HasValue)
+            {
+                query = query.Where(p => p.SequenceNumber < requestDto.LastSequenceProductNumber.Value);
+            }
+
+            var products = await query
+                .OrderByDescending(p => p.SequenceNumber)
+                .Take(requestDto.Limit)
+                .Select(p => new ProductSimpleInfoDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    PrimaryImageLink = p.PrimaryImageLink,
+                    Description = p.Description,
+                    SequenceProductNumber = p.SequenceNumber
+                })
+                .ToListAsync();
+
+            int? LastSequenceProductNumber = products.Count != 0 ? products.Last().SequenceProductNumber : requestDto.LastSequenceProductNumber;
+
+            return new GetProductsPaginatedDto
+            {
+                Products = products,
+                LastSequenceProductNumber = LastSequenceProductNumber
+            };
+        }
+
         public async Task<bool> HandleAddProduct(Guid StoreId, AddProductDto addProductDto)
         {
             await using (var transaction = await _appDbContext.Database.BeginTransactionAsync())

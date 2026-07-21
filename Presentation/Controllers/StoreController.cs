@@ -1,15 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.DTOs.OfferDto;
+using Application.DTOs.ProductDto;
+using Application.DTOs.StoreDto;
+using Application.Services;
+using Infrastructure.ExternalServices;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Infrastructure.ExternalServices;
-using Application.Services;
-using Application.DTOs.StoreDto;
-using System.Runtime.CompilerServices;
-using Application.DTOs.OfferDto;
 
 namespace Presentation.Controllers
 {
@@ -20,13 +21,15 @@ namespace Presentation.Controllers
         private readonly BlobStorageUploadService _storageUploadService;
         private readonly StoreService _storeService;
         private readonly OfferService _offerService;
+        private readonly ProductService _productService;
 
         public StoreController(BlobStorageUploadService storageUploadService, StoreService storeService,
-            OfferService offerService)
+            OfferService offerService, ProductService productService)
         {
             _storageUploadService = storageUploadService;
             _storeService = storeService;
             _offerService = offerService;
+            _productService = productService;
         }
 
 
@@ -148,6 +151,20 @@ namespace Presentation.Controllers
             var offers = await _offerService.GetOffersForSeller(StoreId.Value);
 
             return Ok(new { offers });
+        }
+
+        [HttpGet("products")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> GetProductsForCustomer([FromQuery] GetProductsPaginatedRequestDto requestDto)
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            var result = await _productService.GetStoreProductsForCustomer(requestDto, StoreId.Value);
+
+            return Ok(new { result });
         }
     }
 }
