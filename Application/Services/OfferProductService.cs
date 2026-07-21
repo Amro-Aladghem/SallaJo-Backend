@@ -31,6 +31,7 @@ namespace Application.Services
             }
 
             await _appDbContext.OfferProducts.AddRangeAsync(OfferProducts);
+
             return await _appDbContext.SaveChangesAsync() > 0;
         }
     }
