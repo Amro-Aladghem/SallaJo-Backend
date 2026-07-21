@@ -105,5 +105,33 @@ namespace Application.Services
                 })
                 .ToListAsync();
         }
+
+        public async Task<List<OfferFullInfoDto>> GetOffersForSeller(Guid storeId)
+        {
+            return await _appDbContext.Offers
+                .Where(o => o.StoreId == storeId)
+                .OrderByDescending(o => o.Id)
+                .Select(o => new OfferFullInfoDto
+                {
+                    Id = o.Id,
+                    StoreId = o.StoreId,
+                    ImageLink = o.ImageLink,
+                    Title = o.Title,
+                    Description = o.Description,
+                    OfferPrice = o.OfferPrice,
+                    StartDate = o.StartDate,
+                    EndDate = o.EndDate,
+                    IsActive = o.IsActive,
+                    OfferProducts = o.OfferProducts.Select(op => new ProductSimpleInfoDto
+                    {
+                        Id = op.product.Id,
+                        Description = op.product.Description,
+                        Name = op.product.Name,
+                        Price = op.product.Price,
+                        PrimaryImageLink = op.product.PrimaryImageLink,
+                    }).ToList()
+                })
+                .ToListAsync();
+        }
     }
 }

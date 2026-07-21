@@ -118,5 +118,20 @@ namespace Presentation.Controllers
 
             return Ok(new { offers });
         }
+
+        [HttpGet("offers")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> GetOffersForSeller()
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            var offers = await _offerService.GetOffersForSeller(StoreId.Value);
+
+            return Ok(new { offers });
+        }
     }
 }
