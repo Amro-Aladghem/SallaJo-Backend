@@ -17,11 +17,13 @@ namespace Presentation.Controllers
     {
         private readonly DiscountService _discountService;
         private readonly ProductService _productService;
+        private readonly ImageProductService _imageProductService;
 
-        public ProductController(DiscountService discountService, ProductService productService)
+        public ProductController(DiscountService discountService, ProductService productService, ImageProductService imageProductService)
         {
             _discountService = discountService;
             _productService = productService;
+            _imageProductService = imageProductService;
         }
 
         [HttpPost("")]
@@ -80,6 +82,21 @@ namespace Presentation.Controllers
                 return Unauthorized();
 
             bool isDone = await _productService.DeleteProduct(id);
+
+            return Ok(new { isDone });
+        }
+
+        [HttpPut("{id}/images")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> UpdateImage(UpdateImageDto updateImageDto, Guid id)
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            bool isDone = await _imageProductService.UpdateImage(updateImageDto);
 
             return Ok(new { isDone });
         }

@@ -1,5 +1,7 @@
+using Application.DTOs.ProductDto;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +34,15 @@ namespace Application.Services
 
             await _appDbContext.ProductImages.AddRangeAsync(productImages);
             return await _appDbContext.SaveChangesAsync() > 0;
+        }
+
+        public async Task<bool> UpdateImage(UpdateImageDto updateImageDto)
+        {
+            int NumberOfRowsAffected = await _appDbContext.ProductImages
+                .Where(pi => pi.Id == updateImageDto.OldImageId)
+                .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.ImageLink, updateImageDto.NewImageLink));
+
+            return NumberOfRowsAffected > 0;
         }
     }
 }
