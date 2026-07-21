@@ -2,6 +2,7 @@
 using Application.DTOs.PersonDto;
 using Application.Services;
 using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Converters;
@@ -29,6 +30,7 @@ namespace Presentation.Controllers
             _storeService = storeService;
         }
 
+        [Authorize(Policy ="PersonRole")]
         [HttpGet("info/auth")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -75,6 +77,7 @@ namespace Presentation.Controllers
             return Ok(new { seller });
         }
 
+        [Authorize(Policy = "PersonRole")]
         [HttpPost("info/initial")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

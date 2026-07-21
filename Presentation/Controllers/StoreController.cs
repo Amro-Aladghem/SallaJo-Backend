@@ -3,6 +3,7 @@ using Application.DTOs.ProductDto;
 using Application.DTOs.StoreDto;
 using Application.Services;
 using Infrastructure.ExternalServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -33,6 +34,7 @@ namespace Presentation.Controllers
         }
 
 
+        [Authorize(Policy = "PersonRole")]
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
