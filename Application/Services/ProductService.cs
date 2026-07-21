@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.ProductDto;
 using Domain.Entities;
 using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,21 @@ namespace Application.Services
                 return null;
 
             return product.Id;
+        }
+
+        public async Task<bool> UpdateProduct(Guid productId, UpdateProductDto updateProductDto)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Products
+                .Where(p => p.Id == productId)
+                .ExecuteUpdateAsync(sp => sp
+                    .SetProperty(p => p.Name, updateProductDto.Name)
+                    .SetProperty(p => p.Description, updateProductDto.Description)
+                    .SetProperty(p => p.Price, updateProductDto.Price)
+                    .SetProperty(p => p.Stock, updateProductDto.Stock)
+                    .SetProperty(p => p.IsAcceptedToAppear, updateProductDto.IsAcceptedToAppear)
+                    .SetProperty(p => p.PrimaryImageLink, updateProductDto.PrimaryImageLink));
+
+            return NumberOfRowsAffected > 0;
         }
 
         public async Task<bool> HandleAddProduct(Guid StoreId, AddProductDto addProductDto)
