@@ -1,4 +1,6 @@
-﻿using Infrastructure.Data;
+﻿using Application.DTOs.ProductDto;
+using Domain.Entities;
+using Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +12,62 @@ namespace Application.Services
     public class ProductService
     {
         private readonly AppDbContext _appDbContext;
+        private readonly ImageProductService _imageProductService;
 
-        public ProductService(AppDbContext appDbContext)
+        public ProductService(AppDbContext appDbContext, ImageProductService imageProductService)
         {
             _appDbContext = appDbContext;
+            _imageProductService = imageProductService;
+        }
+
+        private async Task<Guid?> AddProduct(Guid StoreId, AddProductDto addProductDto)
+        {
+            Product product = new Product()
+            {
+                Name = addProductDto.Name,
+                StoreId = StoreId,
+                Description = addProductDto.Description,
+                Price = addProductDto.Price,
+                Stock = addProductDto.Stock,
+                PrimaryImageLink = addProductDto.PrimaryImageLink,
+                IsAcceptedToAppear = true,
+                IsDeleted = false,
+                NumberOfOrders = 0
+            };
+
+            await _appDbContext.Products.AddAsync(product);
+
+            if (await _appDbContext.SaveChangesAsync() <= 0)
+                return null;
+
+            return product.Id;
+        }
+
+        public async Task<bool> HandleAddProduct(Guid StoreId, AddProductDto addProductDto)
+        {
+            await using (var transaction = await _appDbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    Guid? ProductId = await AddProduct(StoreId, addProductDto);
+
+                    if (ProductId == null)
+                        throw new Exception("Failed to create product");
+
+                    bool isDone = await _imageProductService.AddImagesForProduct(ProductId.Value, addProductDto.ImagesLinks);
+
+                    if (!isDone)
+                        throw new Exception("Failed to add product images");
+
+                    await transaction.CommitAsync();
+                    return true;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    return false;
+                }
+            }
         }
     }
 }

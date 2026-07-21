@@ -14,7 +14,7 @@ public class Product
     public bool? IsDeleted { get; set; }
 
     public Store Store { get; set; } = null!;
-    public ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public IList<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
     public ICollection<Discount> Discounts { get; set; } = new List<Discount>();
 
 }
