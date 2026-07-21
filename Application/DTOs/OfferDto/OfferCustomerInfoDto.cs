@@ -1,22 +1,21 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Application.DTOs.OfferDto
 {
-    public record AddOfferDto
+    public record OfferCustomerInfoDto
     {
+        public Guid Id { get; set; }
         public string? ImageLink { get; set; }
-
-        [Required]
         public string Title { get; set; } = null!;
         public string? Description { get; set; }
         public decimal? OfferPrice { get; set; }
-        public List<Guid> ProductsIds { get; set; }
+        public string? ProductsStringIds { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

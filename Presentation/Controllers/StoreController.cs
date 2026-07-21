@@ -87,7 +87,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _offerService.AddOffer(StoreId.Value, addOfferDto);
+            bool isDone = await _offerService.HandleCreateOffer(StoreId.Value, addOfferDto);
 
             return Ok(new { isDone });
         }
@@ -106,6 +106,17 @@ namespace Presentation.Controllers
             bool isDone = await _offerService.ToggleOfferStatus(id);
 
             return Ok(new { isDone });
+        }
+
+        [HttpGet("{id}/offers")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> GetOffersForCustomer(Guid id)
+        {
+            var offers = await _offerService.GetOffersForCustomer(id);
+
+            return Ok(new { offers });
         }
     }
 }

@@ -12,6 +12,6 @@ public class Offer
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public bool? IsActive { get; set; }
-
+    public List<OfferProduct> OfferProducts { get; set; }
     public Store store { get; set; }    
 }
