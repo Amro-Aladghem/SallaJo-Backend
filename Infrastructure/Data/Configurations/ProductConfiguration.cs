@@ -14,5 +14,8 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         builder.Property(e => e.IsAcceptedToAppear).HasDefaultValue(true);
         builder.Property(e => e.NumberOfOrders).HasDefaultValue(0);
         builder.Property(e => e.IsDeleted).HasDefaultValue(false);
+        builder.Property(p => p.SequenceNumber).ValueGeneratedOnAdd();
+        builder.HasIndex(p=>p.SequenceNumber);
+        builder.Property(p=>p.IsFeaturedProduct).HasDefaultValue(false);
     }
 }

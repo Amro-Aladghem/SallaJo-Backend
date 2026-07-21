@@ -9,6 +9,7 @@ using Application.Services;
 using Infrastructure.Data;
 using Npgsql;
 using Microsoft.EntityFrameworkCore;
+using Infrastructure.ExternalServices;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +42,12 @@ builder.Services.AddValidatorsFromAssembly(typeof(Application.Validators.PersonA
 builder.Services.AddScoped<PersonService>();
 builder.Services.AddScoped<PasswordService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<SellerService>();
+builder.Services.AddScoped<SellerService>();
+builder.Services.AddScoped<BlobStorageUploadService>();
+builder.Services.AddScoped<ProductService>();
+builder.Services.AddScoped<ImageProductService>();
+builder.Services.AddScoped<DiscountService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -58,6 +65,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<GlobalExeptionMidlleWare>();
 
 app.UseHttpsRedirection();
+
+app.UseMiddleware<JwtFromCookieMiddleware>();
 
 app.UseAuthentication();
 

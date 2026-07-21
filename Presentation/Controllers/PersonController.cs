@@ -100,9 +100,5 @@ namespace Presentation.Controllers
 
             return Ok(new { person });
         }
-
-
-
-
     }
 }

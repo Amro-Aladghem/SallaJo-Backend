@@ -67,13 +67,13 @@ namespace Application.Services
             return accessToken;
         }
 
-        public async Task<TokenDto> CreateToken(string PersonId, string UserId, string Role, Guid? StoreId = null)
+        public async Task<TokenDto> CreateToken(Guid PersonId, Guid UserId, string Role, Guid? StoreId = null)
         {
-            string authToken = CreateAuthToken(new Guid(UserId), Role, StoreId);
+            string authToken = CreateAuthToken(UserId, Role, StoreId);
 
             string reffreshToken = GenerateRefreshToken();
 
-            await dbContext.Persons.Where(P => P.Id == new Guid(PersonId)).ExecuteUpdateAsync(S => S.SetProperty(s => s.RefreshToken, reffreshToken)
+            await dbContext.Persons.Where(P => P.Id == PersonId).ExecuteUpdateAsync(S => S.SetProperty(s => s.RefreshToken, reffreshToken)
                                                                 .SetProperty(s => s.ExpiredTokenTime, DateTime.UtcNow.AddDays(7)));
 
             return new TokenDto()

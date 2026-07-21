@@ -1,0 +1,16 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Application.DTOs.SellerDto
+{
+    public record SellerAuthInfoDto
+    {
+        public Guid Id { get; set; }
+        public Guid PersonId { get; set; }
+        public int SellerRoleId { get; set; }
+        public Guid StoreId { get; set; }
+    }
+}

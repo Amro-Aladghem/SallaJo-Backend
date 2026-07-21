@@ -1,9 +1,13 @@
 ﻿using Application.DTOs.AuthDto;
+using Application.DTOs.PersonDto;
+using Application.DTOs.ProductDto;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Security.Cryptography.Xml;
 using System.Text;
@@ -43,7 +47,7 @@ namespace Application.Services
             return new PersonAuthResponseDto()
             {
 
-                SysId = person.Id.ToString(),
+                SysId = person.Id,
                 ImageUrl = person.ImageUrl,
                 FullName = person.FirstName + ' ' + person.LastName,
                 IsActive = person.IsActive,
@@ -69,7 +73,7 @@ namespace Application.Services
 
             return new PersonAuthResponseDto()
             {
-                SysId = person.Id.ToString(),
+                SysId = person.Id,
                 ImageUrl = null,
                 FullName = "",
                 IsActive = person.IsActive,
@@ -77,14 +81,13 @@ namespace Application.Services
             };
         }
 
-
         public async Task<PersonAuthResponseDto?> GetPersonInfoWithReffreshToken(string ReffreshToken)
         {
             PersonAuthResponseDto? personAuthResponseDto = await _appDbContext.Persons
                 .Where(P => P.RefreshToken == ReffreshToken && P.ExpiredTokenTime > DateTime.UtcNow)
                 .Select(person => new PersonAuthResponseDto()
                 {
-                    SysId = person.Id.ToString(),
+                    SysId = person.Id,
                     ImageUrl = null,
                     FullName = "",
                     IsActive = person.IsActive,
@@ -93,6 +96,52 @@ namespace Application.Services
                 .FirstOrDefaultAsync();
 
             return personAuthResponseDto;
+        }
+
+        public async Task<bool> AddInitialPersonInfo(Guid PersonId,AddInitialPersonInfoDto addInitialPersonInfoDto)
+        {
+            int NumberOfUpdatedRows = await _appDbContext.Persons.Where(P => P.Id == PersonId)
+                .ExecuteUpdateAsync(sp => sp
+                .SetProperty(p => p.FirstName, addInitialPersonInfoDto.FristName)
+                .SetProperty(p => p.LastName, addInitialPersonInfoDto.LastName)
+                .SetProperty(p => p.ImageUrl, addInitialPersonInfoDto.ImageUrl)
+                .SetProperty(p => p.GovernorateId, addInitialPersonInfoDto.GovernorateId)
+                .SetProperty(p => p.CountryId, 1)
+                );
+
+            return NumberOfUpdatedRows>0;
+        }
+
+        public async Task<bool> UpdatePersonInfo(Guid PersonId, UpdatePersonDto updatePersonDto)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Persons
+            .Where(P=>P.Id==PersonId)
+            .ExecuteUpdateAsync(sp =>
+                sp.SetProperty(p => p.FirstName, updatePersonDto.FirstName)
+                .SetProperty(p => p.LastName, updatePersonDto.LastName)
+                .SetProperty(p => p.Email, updatePersonDto.Email)
+                .SetProperty(p => p.ImageUrl, updatePersonDto.ImageUrl)
+            );
+
+            return NumberOfRowsAffected > 0;
+        }
+
+        public async Task<PersonInfoDto?> GetPersonInfo(Guid personId)
+        {
+            return await _appDbContext.Persons
+                .Where(p => p.Id == personId)
+                .Select(p => new PersonInfoDto
+                {
+                    FirstName = p.FirstName,
+                    LastName = p.LastName,
+                    Email = p.Email,
+                    ImageUrl = p.ImageUrl,
+                    Phone = p.Phone,
+                    UserRole = p.UserTypeId == (int)eUserTypes.Person
+                        ? eUserTypes.Person.ToString()
+                        : eUserTypes.Seller.ToString()
+                })
+                .FirstOrDefaultAsync();
         }
     }
 }

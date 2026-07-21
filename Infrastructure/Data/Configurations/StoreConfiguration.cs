@@ -17,5 +17,8 @@ public class StoreConfiguration : IEntityTypeConfiguration<Store>
         builder.Property(e => e.CoverStoreImageLink).HasMaxLength(2000);
         builder.Property(e => e.Slug).HasMaxLength(500);
         builder.Property(e => e.NumberOfOrders).HasDefaultValue(0);
+        builder.Property(e => e.IsAcceptedToShowStoke).HasDefaultValue(false);
+
+        builder.HasIndex(e => e.Slug);
     }
 }
