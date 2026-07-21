@@ -106,6 +106,21 @@ namespace Application.Services
                 .ToListAsync();
         }
 
+        public async Task<bool> UpdateOffer(Guid offerId, UpdateOfferDto updateOfferDto)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Offers
+                .Where(o => o.Id == offerId)
+                .ExecuteUpdateAsync(sp => sp
+                    .SetProperty(p => p.ImageLink, updateOfferDto.ImageLink)
+                    .SetProperty(p => p.Title, updateOfferDto.Title)
+                    .SetProperty(p => p.Description, updateOfferDto.Description)
+                    .SetProperty(p => p.OfferPrice, updateOfferDto.OfferPrice)
+                    .SetProperty(p => p.StartDate, updateOfferDto.StartDate)
+                    .SetProperty(p => p.EndDate, updateOfferDto.EndDate));
+
+            return NumberOfRowsAffected > 0;
+        }
+
         public async Task<List<OfferFullInfoDto>> GetOffersForSeller(Guid storeId)
         {
             return await _appDbContext.Offers

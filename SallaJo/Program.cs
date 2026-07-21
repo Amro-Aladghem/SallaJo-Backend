@@ -45,6 +45,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<SellerService>();
 builder.Services.AddScoped<SellerService>();
 builder.Services.AddScoped<BlobStorageUploadService>();
+builder.Services.AddScoped<ProductService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
