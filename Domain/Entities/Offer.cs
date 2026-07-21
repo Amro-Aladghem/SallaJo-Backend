@@ -8,10 +8,9 @@ public class Offer
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
     public decimal? OfferPrice { get; set; }
-    public string? ProductsStringIds { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public bool? IsActive { get; set; }
     public List<OfferProduct> OfferProducts { get; set; }
-    public Store store { get; set; }    
+    public Store Store { get; set; }    
 }

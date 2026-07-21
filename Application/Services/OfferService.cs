@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.OfferDto;
+using Application.DTOs.ProductDto;
 using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,6 @@ namespace Application.Services
                 Title = addOfferDto.Title,
                 Description = addOfferDto.Description,
                 OfferPrice = addOfferDto.OfferPrice,
-                ProductsStringIds = string.Join(",", addOfferDto.ProductsIds),
                 StartDate = addOfferDto.StartDate,
                 EndDate = addOfferDto.EndDate
             };
@@ -91,10 +91,17 @@ namespace Application.Services
                     Title = o.Title,
                     Description = o.Description,
                     OfferPrice = o.OfferPrice,
-                    ProductsStringIds = o.ProductsStringIds,
                     StartDate = o.StartDate,
                     EndDate = o.EndDate,
-                    IsActive = o.IsActive
+                    IsActive = o.IsActive,
+                    Products = o.OfferProducts.Select(op => new ProductSimpleInfoDto
+                    {
+                        Id = op.product.Id,
+                        Description = op.product.Description,
+                        Name = op.product.Name,
+                        Price = op.product.Price,
+                        PrimaryImageLink = op.product.PrimaryImageLink,
+                    }).ToList()
                 })
                 .ToListAsync();
         }
