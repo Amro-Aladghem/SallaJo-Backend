@@ -3,6 +3,7 @@ namespace Domain.Entities;
 public class Offer
 {
     public Guid Id { get; set; }
+    public Guid StoreId { get; set; }
     public string? ImageLink { get; set; }
     public string Title { get; set; } = null!;
     public string? Description { get; set; }
@@ -11,4 +12,6 @@ public class Offer
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public bool? IsActive { get; set; }
+
+    public Store store { get; set; }    
 }

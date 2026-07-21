@@ -50,6 +50,7 @@ namespace Application.Services
 
             return await _appDbContext.SaveChangesAsync() > 0;
         }
+
         public async Task<bool> HandleCreateSellerForFirstTimeAsManager(Guid PersonId,AddInitialPersonInfoDto addInitialPersonInfoDto)
         {
             if (!await _personService.AddInitialPersonInfo(PersonId, addInitialPersonInfoDto))
@@ -59,6 +60,17 @@ namespace Application.Services
                 return false;
 
             return true;
+        }
+
+        public async Task<bool> HandleUpdateSellerInfo(UpdatePersonDto updatePersonDto,Guid SellerId)
+        {
+            Guid PersonId = await _appDbContext.Sellers.Where(s=>s.Id==SellerId)
+                .Select(s=>s.PersonId)
+                .FirstAsync();
+
+            bool isDone = await _personService.UpdatePersonInfo(PersonId,updatePersonDto);
+
+            return isDone;
         }
     }
 }

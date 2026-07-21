@@ -25,5 +25,19 @@ namespace Presentation.Controllers
                 return null;
             }
         }
+
+        protected Guid? StoreId
+        {
+            get
+            {
+                var storeIdClaim = User.FindFirst("store_id")?.Value;
+                if(Guid.TryParse(storeIdClaim,out var parsedStoreIdClaim))
+                {
+                    return parsedStoreIdClaim;
+                }
+
+                return null;
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using Application.Services;
 using Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,6 +79,20 @@ namespace Presentation.Controllers
 
             bool isDone = await _sellerService.HandleCreateSellerForFirstTimeAsManager(UserId.Value, addInitialPersonInfoDto);
 
+            return Ok(new { isDone });
+        }
+
+        [HttpPut("info")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> UpdateSellerInfo(UpdatePersonDto updatePersonDto)
+        {
+            if (UserId is null) 
+                return Unauthorized();
+
+            bool isDone = await _sellerService.HandleUpdateSellerInfo(updatePersonDto,UserId.Value);
             return Ok(new { isDone });
         }
     }

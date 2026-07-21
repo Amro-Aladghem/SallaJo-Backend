@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using Infrastructure.ExternalServices;
 using Application.Services;
 using Application.DTOs.StoreDto;
+using System.Runtime.CompilerServices;
+using Application.DTOs.OfferDto;
 
 namespace Presentation.Controllers
 {
@@ -17,11 +19,14 @@ namespace Presentation.Controllers
     {
         private readonly BlobStorageUploadService _storageUploadService;
         private readonly StoreService _storeService;
+        private readonly OfferService _offerService;
 
-        public StoreController(BlobStorageUploadService storageUploadService, StoreService storeService)
+        public StoreController(BlobStorageUploadService storageUploadService, StoreService storeService,
+            OfferService offerService)
         {
             _storageUploadService = storageUploadService;
             _storeService = storeService;
+            _offerService = offerService;
         }
 
 
@@ -67,6 +72,23 @@ namespace Presentation.Controllers
                 return Unauthorized();
 
             bool isDone = await _storeService.UpdateStoreInfo(updateStoreInfoDto,id);
+            return Ok(new { isDone });
+        }
+
+        [HttpPost("offer")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public async Task<ActionResult> CreateOfferForStore(AddOfferDto addOfferDto)
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            bool isDone = await _offerService.AddOffer(StoreId.Value, addOfferDto);
+
             return Ok(new { isDone });
         }
     }

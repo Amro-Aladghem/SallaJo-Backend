@@ -109,5 +109,19 @@ namespace Application.Services
 
             return NumberOfUpdatedRows>0;
         }
+
+        public async Task<bool> UpdatePersonInfo(Guid PersonId, UpdatePersonDto updatePersonDto)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Persons
+            .Where(P=>P.Id==PersonId)
+            .ExecuteUpdateAsync(sp =>
+                sp.SetProperty(p => p.FirstName, updatePersonDto.FirstName)
+                .SetProperty(p => p.LastName, updatePersonDto.LastName)
+                .SetProperty(p => p.Email, updatePersonDto.Email)
+                .SetProperty(p => p.ImageUrl, updatePersonDto.ImageUrl)
+            );
+
+            return NumberOfRowsAffected > 0;
+        }
     }
 }
