@@ -13,7 +13,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace Presentation.Controllers
 {
 
-    [Route("api/v1/tool")]
+    [Route("api/v1/tools")]
     [ApiController]
     public class ToolController :BaseApiController
     {

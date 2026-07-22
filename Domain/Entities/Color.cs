@@ -6,6 +6,5 @@ public class Color
     public string? Name { get; set; }
     public string? Code { get; set; }
 
-    public ICollection<Store> StoresAsPrimary { get; set; } = new List<Store>();
-    public ICollection<Store> StoresAsSecondary { get; set; } = new List<Store>();
+    public ICollection<Store> Stores { get; set; } = new List<Store>();
 }
