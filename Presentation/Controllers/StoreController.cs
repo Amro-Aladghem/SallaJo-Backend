@@ -3,6 +3,7 @@ using Application.DTOs.ProductDto;
 using Application.DTOs.StoreDto;
 using Application.Services;
 using Infrastructure.ExternalServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -33,6 +34,7 @@ namespace Presentation.Controllers
         }
 
 
+        [Authorize(Policy = "PersonRole")]
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -63,6 +65,7 @@ namespace Presentation.Controllers
             return Ok(new { store });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpGet("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -81,7 +84,25 @@ namespace Presentation.Controllers
             return Ok(new { store });
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{slug}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> GetStorePageInfo(string slug)
+        {
+            if (string.IsNullOrEmpty(slug))
+                return BadRequest(new { message = "store slug is not valid!" });
+
+            var store = await _storeService.GetStorePageInfo(slug);
+
+            if (store is null)
+                return NotFound();
+
+            return Ok(new { store });
+        }
+
+        [HttpGet("{slug}/info")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -95,6 +116,7 @@ namespace Presentation.Controllers
             return Ok(new { store });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -110,6 +132,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPost("offer")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -127,6 +150,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("offer/{id}/status")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -154,6 +178,7 @@ namespace Presentation.Controllers
             return Ok(new { offers });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("offers/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -170,6 +195,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpGet("offers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -197,6 +223,7 @@ namespace Presentation.Controllers
             return Ok(new { result });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpGet("products")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -1,6 +1,7 @@
 using Application.DTOs.DiscountDto;
 using Application.DTOs.ProductDto;
 using Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -53,6 +54,7 @@ namespace Presentation.Controllers
             return Ok(new { product });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -71,6 +73,7 @@ namespace Presentation.Controllers
             return Ok(new { product });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPost("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -86,6 +89,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -101,6 +105,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("{id}/appear")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -116,6 +121,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("{id}/delete")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -131,6 +137,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("{id}/images")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -146,6 +153,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPost("{productId}/discounts")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -167,6 +175,7 @@ namespace Presentation.Controllers
             return Ok(new { isDone });
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("{id}/discounts/{discountId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

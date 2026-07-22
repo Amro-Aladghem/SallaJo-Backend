@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.StoreDto;
 using Infrastructure.ExternalServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -31,6 +32,7 @@ namespace Presentation.Controllers
             _blobStorageUploadService = blobStorageUploadService;
         }
 
+        [Authorize(Policy = "SellerRole")]
         [HttpPost("upload/image")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

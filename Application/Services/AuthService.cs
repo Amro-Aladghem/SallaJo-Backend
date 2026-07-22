@@ -43,7 +43,7 @@ namespace Application.Services
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            int LifeTimeMinutes = Role==eUserTypes.Person.ToString()? 15: jwtOption.Lifetime;
+            int LifeTimeMinutes = Role==eUserTypes.Person.ToString()? 40: jwtOption.Lifetime;
 
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
