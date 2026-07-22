@@ -97,6 +97,31 @@ namespace Application.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<StorePageInfoDto?> GetStorePageInfo(string slug)
+        {
+            return await _appDbContext.Stores
+                .Where(s => s.Slug == slug)
+                .Select(s => new StorePageInfoDto
+                {
+                    Name = s.Name,
+                    LogoImageUrl = s.LogoImageUrl!,
+                    Description = s.Description!,
+                    GovernorateId = s.GovernorateId ?? 0,
+                    PhoneNumber = s.PhoneNumber!,
+                    Email = s.Email,
+                    FacebookLink = s.FacebookLink,
+                    InstagramLink = s.InstagramLink,
+                    CountryId = s.CountryId,
+                    Slug = s.Slug,
+                    IsActivatedStore = s.IsActivatedStore,
+                    CoverStoreImageLink = s.CoverStoreImageLink,
+                    WelcomeHeaderText = s.WelcomeHeaderText,
+                    PrimaryColorCode = s.PrimaryColor.Code ??"",
+                    SecondaryColorCoded = s.SecondaryColor.Code ?? ""
+                })
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<StoreInfoForCustomerDto?> GetStoreInfoForCustomer(string slug)
         {
             return await _appDbContext.Stores
