@@ -19,11 +19,15 @@ namespace Application.Services
     {
         private readonly AppDbContext _appDbContext;
         private readonly PasswordService _passwordService;
+        private readonly ActivationCodeService _activationCodeService;
+
         
-        public PersonService(AppDbContext appDbContext,PasswordService passwordService)
+        public PersonService(AppDbContext appDbContext,PasswordService passwordService,
+            ActivationCodeService activationCodeService)
         {
             _appDbContext = appDbContext;
             _passwordService = passwordService;
+            _activationCodeService = activationCodeService;
         }
 
         private async Task<Person?> GetAndCheckPerson(PersonAuthDto personAuthDto)
@@ -142,6 +146,21 @@ namespace Application.Services
                         : eUserTypes.Seller.ToString()
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> ChangePersonRoleToSellerRoleWithActivationCode(Guid PersonId,string ActivationToken,
+            Guid StoreId)
+        {
+            if (!await _activationCodeService.IsActivationCodeAccepted(StoreId, ActivationToken))
+                return false;
+
+            int NumberOferRowsAffected = await _appDbContext.Persons.Where(P => P.Id == PersonId)
+                .ExecuteUpdateAsync(sp => sp
+                .SetProperty(p => p.IsActive, true)
+                .SetProperty(p => p.UserTypeId, (int)eUserTypes.Seller)
+            );
+
+            return NumberOferRowsAffected>0;
         }
     }
 }

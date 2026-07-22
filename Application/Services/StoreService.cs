@@ -150,5 +150,15 @@ namespace Application.Services
 
             return StoreId;
         }
+
+        public async Task<Guid?> CheckAndGetIdIfPersonHasNotActiveStore(Guid PersonId)
+        {
+            Guid? Id = await _appDbContext.Stores.Where(S => S.Seller.PersonId == PersonId
+            && S.IsActivatedStore == false)
+                .Select(s => s.Id)
+                .FirstAsync();
+
+            return Id;
+        }
     }
 }

@@ -50,6 +50,7 @@ builder.Services.AddScoped<DiscountService>();
 builder.Services.AddScoped<OfferService>();
 builder.Services.AddScoped<StoreService>();
 builder.Services.AddScoped<OfferProductService>();
+builder.Services.AddScoped<ActivationCodeService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {

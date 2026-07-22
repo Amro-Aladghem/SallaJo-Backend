@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.AuthDto;
 using Application.Services;
 using Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,15 +10,17 @@ namespace Presentation.Controllers
 {
     [Route("api/v1/persons")]
     [ApiController]
-    public class PersonController : ControllerBase
+    public class PersonController : BaseApiController
     {
         private readonly PersonService _personService;
         private readonly AuthService _authService;
+        private readonly StoreService _storeService;
 
-        public PersonController(PersonService personService, AuthService authService)
+        public PersonController(PersonService personService, AuthService authService, StoreService storeService)
         {
             _personService = personService;
             _authService = authService;
+            _storeService = storeService;
         }
 
         [HttpPost("login")]
@@ -43,6 +46,28 @@ namespace Presentation.Controllers
             });
 
             return Ok(new { person });
+        }
+
+        [Authorize(Policy = "PersonRole")]
+        [HttpPut("activate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<ActionResult> ActivatePersonByActivationCode(string ActivationCode)
+        {
+            if (UserId is null)
+                return Unauthorized();
+
+            Guid? StoreId = await _storeService.CheckAndGetIdIfPersonHasNotActiveStore(UserId.Value);
+            if (StoreId is null)
+                return Forbid("You don't have created a store yet");
+
+            bool isDone  = await _personService.ChangePersonRoleToSellerRoleWithActivationCode(UserId.Value, ActivationCode,
+                StoreId.Value);
+
+            return Ok(new { isDone });
         }
 
         [HttpPost("register")]

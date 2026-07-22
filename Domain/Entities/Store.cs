@@ -25,8 +25,8 @@ public class Store
 
     public bool IsAcceptedToShowStoke;
 
-    public Color? PrimaryColor { get; set; }
-    public Color? SecondaryColor { get; set; }
+    public Color PrimaryColor { get; set; }
+    public Color SecondaryColor { get; set; }
     public Country? Country { get; set; }
     public Governorate? Governorate { get; set; }
     public ICollection<Product> Products { get; set; } = new List<Product>();

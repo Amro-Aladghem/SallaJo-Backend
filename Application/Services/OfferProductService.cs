@@ -28,7 +28,7 @@ namespace Application.Services
                     OfferId = OfferId,
                     ProductId = id
                 });
-            }
+            } 
 
             await _appDbContext.OfferProducts.AddRangeAsync(OfferProducts);
 
