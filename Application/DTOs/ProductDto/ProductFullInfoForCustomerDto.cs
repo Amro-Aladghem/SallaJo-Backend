@@ -23,7 +23,7 @@ namespace Application.DTOs.ProductDto
 
         public bool IsAcceptToShowTheStock;
 
-        public decimal? AmountOfDiscount = null;
+        public decimal? AmountOfDiscount  {get;set;}
         public List<ProductImageDto> Images { get; set; }
     }
 }

@@ -42,10 +42,10 @@ namespace Presentation.Controllers
                 HttpOnly = true,
                 SameSite = SameSiteMode.None,
                 Secure = true,
-                Expires = DateTime.UtcNow.AddMinutes(15)
+                Expires = DateTime.UtcNow.AddMinutes(40)
             });
 
-            return Ok(new { person });
+            return Ok(person);
         }
 
         [Authorize(Policy = "PersonRole")]
@@ -67,7 +67,7 @@ namespace Presentation.Controllers
             bool isDone  = await _personService.ChangePersonRoleToSellerRoleWithActivationCode(UserId.Value, ActivationCode,
                 StoreId.Value);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [HttpPost("register")]
@@ -88,10 +88,10 @@ namespace Presentation.Controllers
                 HttpOnly = true,
                 SameSite = SameSiteMode.None,
                 Secure = true,
-                Expires = DateTime.UtcNow.AddMinutes(15)
+                Expires = DateTime.UtcNow.AddMinutes(40)
             });
 
-            return Ok(new { person });
+            return Ok(person);
         }
 
 
@@ -123,7 +123,7 @@ namespace Presentation.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
 
-            return Ok(new { person });
+            return Ok(person);
         }
     }
 }

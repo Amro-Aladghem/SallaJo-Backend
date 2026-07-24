@@ -33,17 +33,9 @@ namespace Presentation.Controllers
 
             var discounts = await _discountService.GetAllDiscounts();
 
-            return Ok(new { discounts });
+            return Ok(discounts);
         }
 
-        [HttpGet("active")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult> GetActiveDiscounts()
-        {
-            var discounts = await _discountService.GetActiveDiscounts();
-
-            return Ok(new { discounts });
-        }
+       
     }
 }

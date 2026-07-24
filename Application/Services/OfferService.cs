@@ -31,7 +31,9 @@ namespace Application.Services
                 Description = addOfferDto.Description,
                 OfferPrice = addOfferDto.OfferPrice,
                 StartDate = addOfferDto.StartDate,
-                EndDate = addOfferDto.EndDate
+                EndDate = addOfferDto.EndDate,
+                StoreId = StoreId,
+                IsActive=true,
             };
 
             await _appDbContext.Offers.AddAsync(offer);
@@ -53,11 +55,14 @@ namespace Application.Services
 
                     if (OfferId == null)
                         throw new Exception("Failed to create offer");
+                    
+                    if(addOfferDto.ProductsIds.Count>0)
+                    {
+                        bool isDone = await _offerProductService.AddProductsForOffer(OfferId.Value, addOfferDto.ProductsIds);
 
-                    bool isDone = await _offerProductService.AddProductsForOffer(OfferId.Value, addOfferDto.ProductsIds);
-
-                    if (!isDone)
-                        throw new Exception("Failed to create offerProducts");
+                        if (!isDone)
+                            throw new Exception("Failed to create offerProducts");
+                    }
 
                     await transaction.CommitAsync();
                     return true;
@@ -79,12 +84,12 @@ namespace Application.Services
             return NumberOfRowsAffected > 0;
         }
 
-        public async Task<List<OfferCustomerInfoDto>> GetOffersForCustomer(Guid storeId)
+        public async Task<List<OfferCustomerInfoDto>> GetOffersForCustomer(string slug)
         {
             return await _appDbContext.Offers
-                .Where(o => o.StoreId == storeId)
+                .Where(o => o.Store.Slug == slug)
                 .OrderByDescending(o => o.Id)
-                .Take(3)
+                .Take(10)
                 .Select(o => new OfferCustomerInfoDto
                 {
                     Id = o.Id,
