@@ -70,6 +70,19 @@ builder.Services.AddAuthorization(options =>
     });
 });
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+           policy =>
+           {
+               policy.WithOrigins("http://localhost:5173")
+                     .AllowAnyMethod()
+                     .AllowAnyHeader()
+                     .AllowCredentials();
+           });
+});
+
 var app = builder.Build();
 
 
@@ -78,7 +91,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+
 app.UseMiddleware<GlobalExeptionMidlleWare>();
+
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 

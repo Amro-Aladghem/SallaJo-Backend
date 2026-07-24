@@ -21,9 +21,9 @@ public class Store
     public string? CoverStoreImageLink { get; set; }
     public string? Slug { get; set; } = null!;
 
-    public bool IsCompletedStoreProfile;
+    public bool IsCompletedStoreProfile { get; set; }
 
-    public bool IsAcceptedToShowStoke;
+    public bool IsAcceptedToShowStoke { get; set; }
 
     public Color PrimaryColor { get; set; }
     public Color SecondaryColor { get; set; }

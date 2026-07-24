@@ -18,7 +18,16 @@ public class StoreConfiguration : IEntityTypeConfiguration<Store>
         builder.Property(e => e.Slug).HasMaxLength(500);
         builder.Property(e => e.NumberOfOrders).HasDefaultValue(0);
         builder.Property(e => e.IsAcceptedToShowStoke).HasDefaultValue(false);
-
         builder.HasIndex(e => e.Slug);
+
+        builder.HasOne(s => s.PrimaryColor)
+            .WithMany()
+            .HasForeignKey(s => s.PrimaryColorId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(s => s.SecondaryColor)
+            .WithMany()
+            .HasForeignKey(s => s.SecondaryColorId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
