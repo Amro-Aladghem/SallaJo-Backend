@@ -21,10 +21,10 @@ namespace Presentation.Controllers
 
         private HashSet<string> ImagesType = new HashSet<string>()
         {
-            ".jpg",
-            ".jpeg",
-            ".png",
-            ".webp",
+            "image/jpg",
+            "image/jpeg",
+            "image/png",
+            "image/webp",
         };
 
         public ToolController(BlobStorageUploadService blobStorageUploadService)
@@ -58,7 +58,7 @@ namespace Presentation.Controllers
                 }
             }
 
-            return Ok(new { UploadedImageUrl });
+            return Ok(UploadedImageUrl);
         }
             
 

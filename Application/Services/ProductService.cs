@@ -81,6 +81,8 @@ namespace Application.Services
 
         private async Task<GetProductsPaginatedDto> GetStoreProductsForListing(IQueryable<Product> query,GetProductsPaginatedRequestDto requestDto)
         {
+            var now = DateTime.UtcNow;
+
             if (requestDto.LastSequenceProductNumber.HasValue)
             {
                 query = query.Where(p => p.SequenceNumber < requestDto.LastSequenceProductNumber.Value);
@@ -95,8 +97,13 @@ namespace Application.Services
                     Name = p.Name,
                     Price = p.Price,
                     PrimaryImageLink = p.PrimaryImageLink,
-                    Description = p.Description.Substring(0, 20),
-                    SequenceProductNumber = p.SequenceNumber
+                    Description = p.Description.Substring(0, 50),
+                    SequenceProductNumber = p.SequenceNumber,
+                    AmountOfDiscount = p.Discounts.Where(d => d.IsActive == true
+                    && d.EndDate >= now)
+                    .OrderByDescending(d => d.StartDate)
+                    .Select(d => d.DiscountAmount)
+                    .FirstOrDefault()
                 })
                 .ToListAsync();
 
@@ -184,7 +191,7 @@ namespace Application.Services
                     IsDeleted = p.IsDeleted,
                     IsAcceptedToAppear = p.IsAcceptedToAppear,
                     AmountOfDiscount = p.Discounts
-                        .Where(d => d.IsActive == true && d.EndDate >= now && now >= d.StartDate)
+                        .Where(d => d.IsActive == true && d.EndDate >= now)
                         .Select(d => d.DiscountAmount)
                         .FirstOrDefault(),
                     Images = p.ProductImages.Select(pi => new ProductImageDto

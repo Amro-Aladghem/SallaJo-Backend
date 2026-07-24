@@ -74,7 +74,7 @@ namespace Presentation.Controllers
                 Expires = DateTime.UtcNow.AddDays(7)
             });
 
-            return Ok(new { seller });
+            return Ok(seller);
         }
 
         [Authorize(Policy = "PersonRole")]
@@ -92,7 +92,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _sellerService.HandleCreateSellerForFirstTimeAsManager(UserId.Value, addInitialPersonInfoDto);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -111,7 +111,7 @@ namespace Presentation.Controllers
             if (seller is null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message="Failed to get data!" });
 
-            return Ok(new { seller });
+            return Ok(seller);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -126,7 +126,7 @@ namespace Presentation.Controllers
                 return Unauthorized();
 
             bool isDone = await _sellerService.HandleUpdateSellerInfo(updatePersonDto,UserId.Value);
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
     }

@@ -38,7 +38,7 @@ namespace Infrastructure.ExternalServices
         {
             Guid id = Guid.NewGuid();
 
-            BlobClient blobClient = GetBlobClient(fileName + id.ToString());
+            BlobClient blobClient = GetBlobClient($"{id}_{Guid.NewGuid()}_{fileName}");
 
             var blobHttpHeader = new BlobHttpHeaders
             {
@@ -57,7 +57,7 @@ namespace Infrastructure.ExternalServices
         public async Task<string> UploadAsync(Stream stream, string fileName,Guid Id)
         {
 
-            BlobClient blobClient = GetBlobClient(fileName + Id.ToString());
+            BlobClient blobClient = GetBlobClient($"{fileName}_{Id}_{Guid.NewGuid()}");
 
             await blobClient.UploadAsync(stream);
 
@@ -67,7 +67,7 @@ namespace Infrastructure.ExternalServices
         private BlobClient GetBlobClient(string fileName)
         {
             string connectionString = _configuration.GetSection("blobconnectionstring").Value!;
-            string containerName = "taskalayze";
+            string containerName = "taskalyze-mzn";
 
             var blobServiceClient = new BlobServiceClient(connectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);

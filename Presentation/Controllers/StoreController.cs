@@ -23,14 +23,16 @@ namespace Presentation.Controllers
         private readonly StoreService _storeService;
         private readonly OfferService _offerService;
         private readonly ProductService _productService;
+        private readonly DiscountService _discountService;
 
         public StoreController(BlobStorageUploadService storageUploadService, StoreService storeService,
-            OfferService offerService, ProductService productService)
+            OfferService offerService, ProductService productService, DiscountService discountService)
         {
             _storageUploadService = storageUploadService;
             _storeService = storeService;
             _offerService = offerService;
             _productService = productService;
+            _discountService = discountService;
         }
 
 
@@ -62,7 +64,7 @@ namespace Presentation.Controllers
             if (store is null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new { message = "فشل اضافة المتجر الرجاء اعادة المحاولة" });
 
-            return Ok(new { store });
+            return Ok(store);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -81,7 +83,7 @@ namespace Presentation.Controllers
             if (store is null)
                 return StatusCode(StatusCodes.Status500InternalServerError, new {message="Failed to get data!"});
 
-            return Ok(new { store });
+            return Ok(store);
         }
 
         [HttpGet("{slug}")]
@@ -99,7 +101,7 @@ namespace Presentation.Controllers
             if (store is null)
                 return NotFound();
 
-            return Ok(new { store });
+            return Ok(store);
         }
 
         [HttpGet("{slug}/info")]
@@ -113,7 +115,7 @@ namespace Presentation.Controllers
             if (store is null)
                 return NotFound();
 
-            return Ok(new { store });
+            return Ok(store);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -129,7 +131,7 @@ namespace Presentation.Controllers
                 return Unauthorized();
 
             bool isDone = await _storeService.UpdateStoreInfo(updateStoreInfoDto,id);
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -147,7 +149,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _offerService.HandleCreateOffer(StoreId.Value, addOfferDto);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -164,18 +166,18 @@ namespace Presentation.Controllers
 
             bool isDone = await _offerService.ToggleOfferStatus(id);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
-        [HttpGet("{id}/offers")]
+        [HttpGet("{slug}/offers")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> GetOffersForCustomer(Guid id)
+        public async Task<ActionResult> GetOffersForCustomer(string slug)
         {
-            var offers = await _offerService.GetOffersForCustomer(id);
+            var offers = await _offerService.GetOffersForCustomer(slug);
 
-            return Ok(new { offers });
+            return Ok(offers);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -192,7 +194,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _offerService.UpdateOffer(id, updateOfferDto);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -208,7 +210,7 @@ namespace Presentation.Controllers
 
             var offers = await _offerService.GetOffersForSeller(StoreId.Value);
 
-            return Ok(new { offers });
+            return Ok(offers);
         }
 
         [HttpGet("{slug}/products")]
@@ -220,7 +222,7 @@ namespace Presentation.Controllers
             
             var result = await _productService.GetStoreProductsForCustomer(requestDto, slug);
 
-            return Ok(new { result });
+            return Ok(result);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -235,7 +237,17 @@ namespace Presentation.Controllers
 
             var result = await _productService.GetStoreProductsForSeller(requestDto, StoreId.Value);
 
-            return Ok(new { result });
+            return Ok(result);
+        }
+
+        [HttpGet("{slug}/active")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> GetActiveDiscounts(string slug)
+        {
+            var discounts = await _discountService.GetActiveDiscounts(slug);
+
+            return Ok(discounts);
         }
 
     }

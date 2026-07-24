@@ -51,7 +51,7 @@ namespace Presentation.Controllers
             if (product is null)
                 return NotFound();
 
-            return Ok(new { product });
+            return Ok(product);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -70,7 +70,7 @@ namespace Presentation.Controllers
             if (product is null)
                 return NotFound();
 
-            return Ok(new { product });
+            return Ok(product);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -86,7 +86,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _productService.HandleAddProduct(StoreId.Value, addProductDto);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -102,7 +102,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _productService.UpdateProduct(id, updateProductDto);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -118,7 +118,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _productService.ToggleAppearStatus(id);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -134,7 +134,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _productService.DeleteProduct(id);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -150,7 +150,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _imageProductService.UpdateImage(updateImageDto);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -172,7 +172,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _discountService.AddDiscount(addDiscountDto, productId);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -188,7 +188,7 @@ namespace Presentation.Controllers
 
             bool isDone = await _discountService.ToggleDiscountStatus(discountId);
 
-            return Ok(new { isDone });
+            return Ok(isDone);
         }
     }
 }

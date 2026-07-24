@@ -68,6 +68,7 @@ namespace Application.Services
                 Phone = personAuthDto.Phone,
                 Password = encryptedPassword,
                 IsActive = false,
+                UserTypeId = (int)eUserTypes.Person
             };
 
             await _appDbContext.Persons.AddAsync(person);

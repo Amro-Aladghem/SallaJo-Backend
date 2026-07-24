@@ -37,12 +37,14 @@ namespace Application.Services
             return await _appDbContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<List<DiscountShortInfoDto>> GetActiveDiscounts()
+        public async Task<List<DiscountShortInfoDto>> GetActiveDiscounts(string slug)
         {
             var now = DateTime.UtcNow;
 
             return await _appDbContext.Discounts
-                .Where(d => d.IsActive == true && d.EndDate >= now && d.StartDate<=now)
+                .Where(d => d.IsActive == true 
+                && d.EndDate >= now && d.StartDate<=now
+                && d.Product.Store.Slug==slug)
                 .Select(d => new DiscountShortInfoDto
                 {
                     DiscountAmount = d.DiscountAmount,

@@ -62,8 +62,12 @@ namespace Application.Services
             return true;
         }
 
-        public async Task<PersonInfoDto?> GetSellerInfo(Guid personId)
+        public async Task<PersonInfoDto?> GetSellerInfo(Guid sellerId)
         {
+            Guid personId = await _appDbContext.Sellers.Where(s=>s.Id==sellerId)
+                .Select(S => S.PersonId)
+               .SingleAsync();
+
             return await _personService.GetPersonInfo(personId);
         }
 
