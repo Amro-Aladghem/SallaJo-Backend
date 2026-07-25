@@ -167,7 +167,7 @@ namespace Application.Services
         public async Task<GetProductsPaginatedDto> GetStoreProductsForSeller(GetProductsPaginatedRequestDto requestDto, Guid StoreId)
         {
             var query = _appDbContext.Products
-                .Where(p => p.IsAcceptedToAppear == true && p.IsDeleted == false
+                .Where(p=> p.IsDeleted == false
                     && p.StoreId==StoreId);
 
             return await GetStoreProductsForListing(query, requestDto);
