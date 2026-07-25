@@ -135,7 +135,8 @@ namespace Application.Services
                     Description = p.Description,
                     Stoke=p.Stock.Value,
                     AmountOfDiscount = p.Discounts
-                        .Where(d => d.IsActive == true && d.EndDate >= now && now>=d.StartDate)
+                        .Where(d => d.IsActive == true && d.EndDate!.Value.Date >= now.Date 
+                         && now.Date>=d.StartDate!.Value.Date)
                         .Select(d => d.DiscountAmount)
                         .FirstOrDefault(),
                     Images = p.ProductImages.Select(pi => new ProductImageDto

@@ -43,7 +43,7 @@ namespace Application.Services
 
             return await _appDbContext.Discounts
                 .Where(d => d.IsActive == true 
-                && d.EndDate >= now && d.StartDate<=now
+                && d.EndDate!.Value.Date >= now.Date && d.StartDate!.Value.Date<=now.Date
                 && d.Product.Store.Slug==slug)
                 .Select(d => new DiscountShortInfoDto
                 {

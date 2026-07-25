@@ -86,8 +86,12 @@ namespace Application.Services
 
         public async Task<List<OfferCustomerInfoDto>> GetOffersForCustomer(string slug)
         {
+            var now = DateTime.UtcNow;
+
             return await _appDbContext.Offers
-                .Where(o => o.Store.Slug == slug)
+                .Where(o => o.Store.Slug == slug &&
+                o.EndDate!.Value.Date >= now.Date
+                && o.StartDate!.Value.Date<=now.Date)
                 .OrderByDescending(o => o.Id)
                 .Take(10)
                 .Select(o => new OfferCustomerInfoDto
