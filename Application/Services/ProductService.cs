@@ -230,5 +230,23 @@ namespace Application.Services
                 }
             }
         }
+
+        public async Task<bool> HandleUpdateProductImage(UpdateImageDto updateImageDto, Guid productId)
+        {
+            bool IsDone = await _imageProductService.UpdateImage(updateImageDto);
+
+            if (!IsDone)
+                return false;
+
+            if(updateImageDto.IsPrimaryImage)
+            {
+                int NumberOfRowsAffected = await _appDbContext.Products.Where(p=>p.Id==productId)
+                    .ExecuteUpdateAsync(sp=>sp.SetProperty(p=>p.PrimaryImageLink,updateImageDto.NewImageLink));
+
+                return NumberOfRowsAffected > 0;
+            }
+
+            return true;
+        }
     }
 }
