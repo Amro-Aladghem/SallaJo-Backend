@@ -19,7 +19,8 @@ namespace Application.Services
             _appDbContext = appDbContext;
         }
 
-
+        int PrimaryColorId = 19;
+        string PrimaryColorHexCode = "#40E0D0";
         public async Task<InitialStoreInfoDto?> AddInitialStoreInfo(AddInitialStoreInfoDto addInitialStoreInfoDto)
         {
             Store store = new Store()
@@ -30,7 +31,8 @@ namespace Application.Services
                 GovernorateId = addInitialStoreInfoDto.GovernorateId,
                 CountryId = 1,
                 IsCompletedStoreProfile = false,
-                LogoImageUrl = addInitialStoreInfoDto.LogoImageUrl
+                LogoImageUrl = addInitialStoreInfoDto.LogoImageUrl,
+                IsActivatedStore=false
             };
 
             await _appDbContext.Stores.AddAsync(store);
@@ -51,7 +53,11 @@ namespace Application.Services
 
         public async Task<bool> UpdateStoreInfo(UpdateStoreInfoDto updateStoreInfoDto,Guid StoreId)
         {
-            int NumberOfRowsAffected = await _appDbContext.Stores.ExecuteUpdateAsync(
+            string randomTempSlug = $"temp-{Guid.NewGuid()}";
+
+            int NumberOfRowsAffected = await _appDbContext.Stores
+                .Where(S=>S.Id==StoreId)
+                .ExecuteUpdateAsync(
                 sp => sp.SetProperty(p => p.Name, updateStoreInfoDto.Name)
                 .SetProperty(p => p.LogoImageUrl, updateStoreInfoDto.LogoImageUrl)
                 .SetProperty(p => p.PrimaryColorId, updateStoreInfoDto.PrimaryColorId)
@@ -65,6 +71,11 @@ namespace Application.Services
                 .SetProperty(p => p.WelcomeHeaderText, updateStoreInfoDto.WelcomeHeaderText)
                 .SetProperty(p => p.CoverStoreImageLink, updateStoreInfoDto.CoverStoreImageLink)
                 .SetProperty(p => p.IsAcceptedToShowStoke, updateStoreInfoDto.IsAcceptedToShowStoke)
+                .SetProperty(p=>p.IsCompletedStoreProfile,true)
+                .SetProperty(p=>p.IsActivatedStore,true)
+                .SetProperty(p=>p.Slug,p=> p.Slug == null || p.Slug == ""
+                ? randomTempSlug
+                : p.Slug)
             );
 
             return NumberOfRowsAffected>0;
@@ -78,8 +89,8 @@ namespace Application.Services
                 {
                     Name = s.Name,
                     LogoImageUrl = s.LogoImageUrl!,
-                    PrimaryColorId = s.PrimaryColorId ?? 1,
-                    SecondaryColorId = s.SecondaryColorId ?? 1,
+                    PrimaryColorId = s.PrimaryColorId ?? PrimaryColorId,
+                    SecondaryColorId = s.SecondaryColorId ?? PrimaryColorId,
                     Description = s.Description!,
                     GovernorateId = s.GovernorateId ?? 1,
                     PhoneNumber = s.PhoneNumber!,
@@ -116,8 +127,8 @@ namespace Application.Services
                     IsActivatedStore = s.IsActivatedStore,
                     CoverStoreImageLink = s.CoverStoreImageLink,
                     WelcomeHeaderText = s.WelcomeHeaderText,
-                    PrimaryColorCode = s.PrimaryColor.Code ??"",
-                    SecondaryColorCoded = s.SecondaryColor.Code ?? ""
+                    PrimaryColorCode = s.PrimaryColor.Code ?? PrimaryColorHexCode,
+                    SecondaryColorCoded = s.SecondaryColor.Code ?? PrimaryColorHexCode
                 })
                 .FirstOrDefaultAsync();
         }

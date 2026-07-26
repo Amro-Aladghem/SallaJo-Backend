@@ -98,6 +98,7 @@ namespace Application.Services
                     Price = p.Price,
                     PrimaryImageLink = p.PrimaryImageLink,
                     Description = p.Description.Substring(0, 50),
+                    Stock = p.Stock,
                     SequenceProductNumber = p.SequenceNumber,
                     AmountOfDiscount = p.Discounts.Where(d => d.IsActive == true
                     && d.EndDate >= now)
@@ -229,6 +230,15 @@ namespace Application.Services
                     return false;
                 }
             }
+        }
+
+        public async Task<bool> UpdateStock(Guid productId, int stockChange)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Products
+                .Where(p => p.Id == productId)
+                .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.Stock, p => (p.Stock ?? 0) + stockChange));
+
+            return NumberOfRowsAffected > 0;
         }
 
         public async Task<bool> HandleUpdateProductImage(UpdateImageDto updateImageDto, Guid productId)

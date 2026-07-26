@@ -90,9 +90,12 @@ namespace Presentation.Controllers
             if (UserId is null)
                 return Unauthorized(new { message = "You are not authorized" });
 
-            bool isDone = await _sellerService.HandleCreateSellerForFirstTimeAsManager(UserId.Value, addInitialPersonInfoDto);
+            Guid? Id = await _sellerService.HandleCreateSellerForFirstTimeAsManager(UserId.Value, addInitialPersonInfoDto);
 
-            return Ok(isDone);
+            if(Id is null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new {message="Failed to create seller"});
+
+            return Ok(Id);
         }
 
         [Authorize(Policy = "SellerRole")]

@@ -38,7 +38,7 @@ namespace Application.Services
             return sellerAuthInfoDto;
         }
 
-        public async Task<bool> CreateSellerForFirstTimeAsManager(Guid PersonId)
+        public async Task<Guid?> CreateSellerForFirstTimeAsManager(Guid PersonId)
         {
             Seller seller = new Seller()
             {
@@ -48,18 +48,20 @@ namespace Application.Services
 
             await _appDbContext.AddAsync(seller);
 
-            return await _appDbContext.SaveChangesAsync() > 0;
+            if (await _appDbContext.SaveChangesAsync() <= 0)
+                return null;
+
+            return seller.Id;
         }
 
-        public async Task<bool> HandleCreateSellerForFirstTimeAsManager(Guid PersonId,AddInitialPersonInfoDto addInitialPersonInfoDto)
+        public async Task<Guid?> HandleCreateSellerForFirstTimeAsManager(Guid PersonId,AddInitialPersonInfoDto addInitialPersonInfoDto)
         {
             if (!await _personService.AddInitialPersonInfo(PersonId, addInitialPersonInfoDto))
-                return false;
+                return null;
 
-            if (!await CreateSellerForFirstTimeAsManager(PersonId))
-                return false;
+            Guid? Id = await CreateSellerForFirstTimeAsManager(PersonId);
 
-            return true;
+           return Id;
         }
 
         public async Task<PersonInfoDto?> GetSellerInfo(Guid sellerId)

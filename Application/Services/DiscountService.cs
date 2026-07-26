@@ -63,9 +63,10 @@ namespace Application.Services
                 .ToListAsync();
         }
 
-        public async Task<List<DiscountInfoDto>> GetAllDiscounts()
+        public async Task<List<DiscountInfoDto>> GetAllDiscounts(Guid? StoreId)
         {
             return await _appDbContext.Discounts
+                .Where(d=>d.Product.StoreId==StoreId)
                 .Select(d => new DiscountInfoDto
                 {
                     Id = d.Id,
