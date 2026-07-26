@@ -138,6 +138,22 @@ namespace Presentation.Controllers
         }
 
         [Authorize(Policy = "SellerRole")]
+        [HttpPut("{id}/stock")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> UpdateStock(int stockChange, Guid id)
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            bool isDone = await _productService.UpdateStock(id, stockChange);
+
+            return Ok(isDone);
+        }
+
+        [Authorize(Policy = "SellerRole")]
         [HttpPut("{id}/images")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -148,7 +164,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _imageProductService.UpdateImage(updateImageDto);
+            bool isDone = await _productService.HandleUpdateProductImage(updateImageDto, id);
 
             return Ok(isDone);
         }

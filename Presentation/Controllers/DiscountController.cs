@@ -31,7 +31,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            var discounts = await _discountService.GetAllDiscounts();
+            var discounts = await _discountService.GetAllDiscounts( StoreId.Value);
 
             return Ok(discounts);
         }

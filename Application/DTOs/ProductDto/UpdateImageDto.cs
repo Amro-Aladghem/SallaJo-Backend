@@ -10,5 +10,6 @@ namespace Application.DTOs.ProductDto
     {
         public Guid OldImageId { get; set; }
         public string NewImageLink { get; set; }
+        public bool IsPrimaryImage { get; set; }
     }
 }

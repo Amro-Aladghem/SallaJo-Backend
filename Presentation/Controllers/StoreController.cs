@@ -45,7 +45,7 @@ namespace Presentation.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
 
         public async Task<ActionResult> CreateStoreWithInitialInformation([FromForm] AddInitialStoreInfoDto addInitialStoreInfoDto,
-            IFormFile Image)
+            IFormFile? Image)
         {
             string? UploadedImageUrl = null;
 
@@ -57,6 +57,7 @@ namespace Presentation.Controllers
                 using (var stream = Image.OpenReadStream())
                 {
                     UploadedImageUrl = await _storageUploadService.UploadAsync(stream, Image.FileName, addInitialStoreInfoDto.SellerId);
+                    addInitialStoreInfoDto.LogoImageUrl = UploadedImageUrl;
                 }
             }
 

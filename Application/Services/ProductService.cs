@@ -98,6 +98,7 @@ namespace Application.Services
                     Price = p.Price,
                     PrimaryImageLink = p.PrimaryImageLink,
                     Description = p.Description.Substring(0, 50),
+                    Stock = p.Stock,
                     SequenceProductNumber = p.SequenceNumber,
                     AmountOfDiscount = p.Discounts.Where(d => d.IsActive == true
                     && d.EndDate >= now)
@@ -135,7 +136,8 @@ namespace Application.Services
                     Description = p.Description,
                     Stoke=p.Stock.Value,
                     AmountOfDiscount = p.Discounts
-                        .Where(d => d.IsActive == true && d.EndDate >= now && now>=d.StartDate)
+                        .Where(d => d.IsActive == true && d.EndDate!.Value.Date >= now.Date 
+                         && now.Date>=d.StartDate!.Value.Date)
                         .Select(d => d.DiscountAmount)
                         .FirstOrDefault(),
                     Images = p.ProductImages.Select(pi => new ProductImageDto
@@ -167,7 +169,7 @@ namespace Application.Services
         public async Task<GetProductsPaginatedDto> GetStoreProductsForSeller(GetProductsPaginatedRequestDto requestDto, Guid StoreId)
         {
             var query = _appDbContext.Products
-                .Where(p => p.IsAcceptedToAppear == true && p.IsDeleted == false
+                .Where(p=> p.IsDeleted == false
                     && p.StoreId==StoreId);
 
             return await GetStoreProductsForListing(query, requestDto);
@@ -228,6 +230,33 @@ namespace Application.Services
                     return false;
                 }
             }
+        }
+
+        public async Task<bool> UpdateStock(Guid productId, int stockChange)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Products
+                .Where(p => p.Id == productId)
+                .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.Stock, p => (p.Stock ?? 0) + stockChange));
+
+            return NumberOfRowsAffected > 0;
+        }
+
+        public async Task<bool> HandleUpdateProductImage(UpdateImageDto updateImageDto, Guid productId)
+        {
+            bool IsDone = await _imageProductService.UpdateImage(updateImageDto);
+
+            if (!IsDone)
+                return false;
+
+            if(updateImageDto.IsPrimaryImage)
+            {
+                int NumberOfRowsAffected = await _appDbContext.Products.Where(p=>p.Id==productId)
+                    .ExecuteUpdateAsync(sp=>sp.SetProperty(p=>p.PrimaryImageLink,updateImageDto.NewImageLink));
+
+                return NumberOfRowsAffected > 0;
+            }
+
+            return true;
         }
     }
 }
