@@ -11,14 +11,18 @@ namespace Application.Services
     public class OfferProductService
     {
         private readonly AppDbContext _appDbContext;
-
-        public OfferProductService(AppDbContext appDbContext)
+        private readonly ProductService _productService;
+        public OfferProductService(AppDbContext appDbContext, ProductService productService)
         {
             _appDbContext = appDbContext;
+            _productService = productService;
         }
 
-        public async Task<bool> AddProductsForOffer(Guid OfferId,List<Guid> ProductIds)
+        public async Task<bool> AddProductsForOffer(Guid OfferId,List<Guid> ProductIds,Guid StoreId)
         {
+            if (!await _productService.IsProductsForStore(ProductIds, StoreId))
+                return false;
+
             List<OfferProduct> OfferProducts = new List<OfferProduct>();
 
             foreach(var id in ProductIds)

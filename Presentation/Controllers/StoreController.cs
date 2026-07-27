@@ -6,6 +6,7 @@ using Infrastructure.ExternalServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,7 @@ namespace Presentation.Controllers
 
         [Authorize(Policy = "PersonRole")]
         [HttpPost("")]
+        [EnableRateLimiting("fixed-5-per-12h-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -51,9 +53,13 @@ namespace Presentation.Controllers
 
             if (UserId is null)
                 return Unauthorized();
+            
 
             if (Image is not null)
             {
+                if (Image.Length > 3 * 1024 * 1024) //3mb
+                    return BadRequest("Image size must be less than 3mb");
+
                 using (var stream = Image.OpenReadStream())
                 {
                     UploadedImageUrl = await _storageUploadService.UploadAsync(stream, Image.FileName, addInitialStoreInfoDto.SellerId);
@@ -88,6 +94,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{slug}")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -106,6 +113,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{slug}/info")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -129,6 +137,9 @@ namespace Presentation.Controllers
         public async Task<ActionResult> UpdateStoreInfo([FromForm] UpdateStoreInfoDto updateStoreInfoDto,Guid id)
         {
             if (UserId is null)
+                return Unauthorized();
+
+            if(StoreId is null || StoreId!=id)
                 return Unauthorized();
 
             bool isDone = await _storeService.UpdateStoreInfo(updateStoreInfoDto,id);
@@ -171,6 +182,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{slug}/offers")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -193,7 +205,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _offerService.UpdateOffer(id, updateOfferDto);
+            bool isDone = await _offerService.UpdateOffer(id, updateOfferDto,StoreId.Value);
 
             return Ok(isDone);
         }
@@ -215,6 +227,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{slug}/products")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -242,6 +255,7 @@ namespace Presentation.Controllers
         }
 
         [HttpGet("{slug}/active")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> GetActiveDiscounts(string slug)

@@ -17,7 +17,7 @@ namespace Application.Services
         private readonly OfferProductService _offerProductService;
 
         public OfferService(AppDbContext appDbContext, OfferProductService offerProductService)
-        { 
+        {
             _appDbContext = appDbContext;
             _offerProductService = offerProductService;
         }
@@ -58,7 +58,8 @@ namespace Application.Services
                     
                     if(addOfferDto.ProductsIds.Count>0)
                     {
-                        bool isDone = await _offerProductService.AddProductsForOffer(OfferId.Value, addOfferDto.ProductsIds);
+                        bool isDone = await _offerProductService.AddProductsForOffer(OfferId.Value, addOfferDto.ProductsIds,
+                            StoreId);
 
                         if (!isDone)
                             throw new Exception("Failed to create offerProducts");
@@ -116,10 +117,11 @@ namespace Application.Services
                 .ToListAsync();
         }
 
-        public async Task<bool> UpdateOffer(Guid offerId, UpdateOfferDto updateOfferDto)
+        public async Task<bool> UpdateOffer(Guid offerId, UpdateOfferDto updateOfferDto,
+            Guid StoreId)
         {
             int NumberOfRowsAffected = await _appDbContext.Offers
-                .Where(o => o.Id == offerId)
+                .Where(o => o.Id == offerId && o.StoreId==StoreId)
                 .ExecuteUpdateAsync(sp => sp
                     .SetProperty(p => p.ImageLink, updateOfferDto.ImageLink)
                     .SetProperty(p => p.Title, updateOfferDto.Title)
