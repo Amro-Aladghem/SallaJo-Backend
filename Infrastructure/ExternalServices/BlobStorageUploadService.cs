@@ -12,7 +12,6 @@ namespace Infrastructure.ExternalServices
     public class BlobStorageUploadService
     {
         private readonly IConfiguration _configuration;
-
         public BlobStorageUploadService(IConfiguration configuration)
         {
             _configuration = configuration;
@@ -54,20 +53,34 @@ namespace Infrastructure.ExternalServices
             return blobClient.Uri.ToString();
         }
 
+        private string FilterImageUrl(string ImageUrl)
+        {
+            string? ImageCdn = _configuration.GetSection("Image_Cdn").Value;
+            string? ImageHost = _configuration.GetSection("Image_Host").Value;
+
+            if (ImageCdn is null || ImageHost is null)
+                throw new Exception("Image_Cnd or Image_Host Env is not exist");
+
+            return ImageUrl.Replace(ImageHost, ImageCdn);
+        }
         public async Task<string> UploadAsync(Stream stream, string fileName,Guid Id)
         {
 
-            BlobClient blobClient = GetBlobClient($"{fileName}_{Id}_{Guid.NewGuid()}");
+            BlobClient blobClient = GetBlobClient($"{Id}_{Guid.NewGuid()}_{fileName}");
 
             await blobClient.UploadAsync(stream);
 
-            return blobClient.Uri.ToString();
+            return FilterImageUrl(blobClient.Uri.ToString());
+
         }
 
         private BlobClient GetBlobClient(string fileName)
         {
-            string connectionString = _configuration.GetSection("blobconnectionstring").Value!;
-            string containerName = "taskalyze-mzn";
+            string? connectionString = _configuration.GetSection("blobconnectionstring").Value;
+            string? containerName = _configuration.GetSection("Image_Container").Value;
+
+            if (connectionString is null || containerName is null)
+                throw new Exception("blobconnectionstring or Image_Container not exist");
 
             var blobServiceClient = new BlobServiceClient(connectionString);
             var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
