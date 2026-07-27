@@ -128,7 +128,8 @@ namespace Application.Services
                     CoverStoreImageLink = s.CoverStoreImageLink,
                     WelcomeHeaderText = s.WelcomeHeaderText,
                     PrimaryColorCode = s.PrimaryColor.Code ?? PrimaryColorHexCode,
-                    SecondaryColorCoded = s.SecondaryColor.Code ?? PrimaryColorHexCode
+                    SecondaryColorCoded = s.SecondaryColor.Code ?? PrimaryColorHexCode,
+                    IsAcceptedToShowStoke=s.IsAcceptedToShowStoke
                 })
                 .FirstOrDefaultAsync();
         }

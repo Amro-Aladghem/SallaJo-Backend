@@ -23,5 +23,6 @@ namespace Application.DTOs.StoreDto
         public bool? IsActivatedStore { get; set; }
         public int? CountryId { get; set; }
         public string? Slug { get; set; } = null!;
+        public bool IsAcceptedToShowStoke { get; set; }
     }
 }

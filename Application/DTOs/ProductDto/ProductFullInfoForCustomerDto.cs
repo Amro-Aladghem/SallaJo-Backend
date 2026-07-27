@@ -19,7 +19,7 @@ namespace Application.DTOs.ProductDto
 
         public int? SequenceProductNumber = null;
 
-        public int Stoke = 0;
+        public int? Stoke  {get;set;}
 
         public bool IsAcceptToShowTheStock;
 
