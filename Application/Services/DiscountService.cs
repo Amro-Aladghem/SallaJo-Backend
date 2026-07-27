@@ -20,7 +20,7 @@ namespace Application.Services
             _appDbContext = appDbContext;
         }
 
-        public async Task<bool> AddDiscount(AddDiscountDto addDiscountDto, Guid ProductId)
+        public async Task<bool> AddDiscount(AddDiscountDto addDiscountDto, Guid ProductId,Guid StoreId)
         {
             Discount discount = new Discount()
             {
@@ -87,17 +87,18 @@ namespace Application.Services
                 .ToListAsync();
         }
 
-        public async Task<bool> ProductHasActiveDiscount(Guid productId)
+        public async Task<bool> ProductHasActiveDiscount(Guid productId,Guid StoreId)
         {
             var now = DateTime.UtcNow;
             return await _appDbContext.Discounts
-                .AnyAsync(d => d.ProductId == productId && d.IsActive == true && d.EndDate >= now);
+                .AnyAsync(d => d.ProductId == productId && d.IsActive == true && d.EndDate >= now 
+                && d.Product.StoreId==StoreId);
         }
 
-        public async Task<bool> ToggleDiscountStatus(Guid discountId)
+        public async Task<bool> ToggleDiscountStatus(Guid discountId,Guid StoreId)
         {
             int NumberOfRowsAffected = await _appDbContext.Discounts
-                .Where(d => d.Id == discountId)
+                .Where(d => d.Id == discountId && d.Product.StoreId==StoreId)
                 .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.IsActive, p => !p.IsActive));
 
             return NumberOfRowsAffected > 0;

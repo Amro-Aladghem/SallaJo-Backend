@@ -46,10 +46,11 @@ namespace Application.Services
             return product.Id;
         }
 
-        public async Task<bool> UpdateProduct(Guid productId, UpdateProductDto updateProductDto)
+        public async Task<bool> UpdateProduct(Guid productId, UpdateProductDto updateProductDto,
+            Guid StoreId)
         {
             int NumberOfRowsAffected = await _appDbContext.Products
-                .Where(p => p.Id == productId)
+                .Where(p => p.Id == productId && p.StoreId==StoreId)
                 .ExecuteUpdateAsync(sp => sp
                     .SetProperty(p => p.Name, updateProductDto.Name)
                     .SetProperty(p => p.Description, updateProductDto.Description)
@@ -61,19 +62,19 @@ namespace Application.Services
             return NumberOfRowsAffected > 0;
         }
 
-        public async Task<bool> ToggleAppearStatus(Guid productId)
+        public async Task<bool> ToggleAppearStatus(Guid productId,Guid StoreId)
         {
             int NumberOfRowsAffected = await _appDbContext.Products
-                .Where(p => p.Id == productId)
+                .Where(p => p.Id == productId && p.StoreId==StoreId)
                 .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.IsAcceptedToAppear, p => !p.IsAcceptedToAppear));
 
             return NumberOfRowsAffected > 0;
         }
 
-        public async Task<bool> DeleteProduct(Guid productId)
+        public async Task<bool> DeleteProduct(Guid productId,Guid StoreId)
         {
             int NumberOfRowsAffected = await _appDbContext.Products
-                .Where(p => p.Id == productId)
+                .Where(p => p.Id == productId && p.StoreId == StoreId)
                 .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.IsDeleted, true));
 
             return NumberOfRowsAffected > 0;
@@ -232,31 +233,40 @@ namespace Application.Services
             }
         }
 
-        public async Task<bool> UpdateStock(Guid productId, int stockChange)
+        public async Task<bool> UpdateStock(Guid productId, int stockChange,Guid StoreId)
         {
             int NumberOfRowsAffected = await _appDbContext.Products
-                .Where(p => p.Id == productId)
+                .Where(p => p.Id == productId && p.StoreId==StoreId)
                 .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.Stock, p => (p.Stock ?? 0) + stockChange));
 
             return NumberOfRowsAffected > 0;
         }
 
-        public async Task<bool> HandleUpdateProductImage(UpdateImageDto updateImageDto, Guid productId)
+        public async Task<bool> HandleUpdateProductImage(UpdateImageDto updateImageDto, Guid productId,
+            Guid StoreId)
         {
-            bool IsDone = await _imageProductService.UpdateImage(updateImageDto);
+            bool IsDone = await _imageProductService.UpdateImage(updateImageDto,StoreId);
 
             if (!IsDone)
                 return false;
 
             if(updateImageDto.IsPrimaryImage)
             {
-                int NumberOfRowsAffected = await _appDbContext.Products.Where(p=>p.Id==productId)
+                int NumberOfRowsAffected = await _appDbContext.Products.Where(p=>p.Id==productId && p.StoreId==StoreId)
                     .ExecuteUpdateAsync(sp=>sp.SetProperty(p=>p.PrimaryImageLink,updateImageDto.NewImageLink));
 
                 return NumberOfRowsAffected > 0;
             }
 
             return true;
+        }
+
+        public async Task<bool> IsProductsForStore(List<Guid> productIds,Guid StoreId)
+        {
+            int Count = await _appDbContext.Products.Where(p=>productIds.Contains(p.Id) && p.StoreId==StoreId)
+                .CountAsync();
+
+            return Count == productIds.Count;
         }
     }
 }

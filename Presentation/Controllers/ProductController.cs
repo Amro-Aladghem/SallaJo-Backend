@@ -103,7 +103,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _productService.UpdateProduct(id, updateProductDto);
+            bool isDone = await _productService.UpdateProduct(id, updateProductDto,StoreId.Value);
 
             return Ok(isDone);
         }
@@ -119,7 +119,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _productService.ToggleAppearStatus(id);
+            bool isDone = await _productService.ToggleAppearStatus(id,StoreId.Value);
 
             return Ok(isDone);
         }
@@ -135,7 +135,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _productService.DeleteProduct(id);
+            bool isDone = await _productService.DeleteProduct(id,StoreId.Value);
 
             return Ok(isDone);
         }
@@ -151,7 +151,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _productService.UpdateStock(id, stockChange);
+            bool isDone = await _productService.UpdateStock(id, stockChange,StoreId.Value);
 
             return Ok(isDone);
         }
@@ -167,7 +167,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _productService.HandleUpdateProductImage(updateImageDto, id);
+            bool isDone = await _productService.HandleUpdateProductImage(updateImageDto, id,StoreId.Value);
 
             return Ok(isDone);
         }
@@ -184,12 +184,12 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool hasActiveDiscount = await _discountService.ProductHasActiveDiscount(productId);
+            bool hasActiveDiscount = await _discountService.ProductHasActiveDiscount(productId,StoreId.Value);
 
             if (hasActiveDiscount)
                 return StatusCode(StatusCodes.Status403Forbidden, new { message = "Product already has an active discount" });
 
-            bool isDone = await _discountService.AddDiscount(addDiscountDto, productId);
+            bool isDone = await _discountService.AddDiscount(addDiscountDto, productId,StoreId.Value);
 
             return Ok(isDone);
         }
@@ -205,7 +205,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _discountService.ToggleDiscountStatus(discountId);
+            bool isDone = await _discountService.ToggleDiscountStatus(discountId,StoreId.Value);
 
             return Ok(isDone);
         }

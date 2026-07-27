@@ -139,6 +139,9 @@ namespace Presentation.Controllers
             if (UserId is null)
                 return Unauthorized();
 
+            if(StoreId is null || StoreId!=id)
+                return Unauthorized();
+
             bool isDone = await _storeService.UpdateStoreInfo(updateStoreInfoDto,id);
             return Ok(isDone);
         }
@@ -202,7 +205,7 @@ namespace Presentation.Controllers
             if (UserId is null || StoreId is null)
                 return Unauthorized();
 
-            bool isDone = await _offerService.UpdateOffer(id, updateOfferDto);
+            bool isDone = await _offerService.UpdateOffer(id, updateOfferDto,StoreId.Value);
 
             return Ok(isDone);
         }

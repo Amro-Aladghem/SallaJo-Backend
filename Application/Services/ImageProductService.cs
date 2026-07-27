@@ -36,10 +36,10 @@ namespace Application.Services
             return await _appDbContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> UpdateImage(UpdateImageDto updateImageDto)
+        public async Task<bool> UpdateImage(UpdateImageDto updateImageDto,Guid StoreId)
         {
             int NumberOfRowsAffected = await _appDbContext.ProductImages
-                .Where(pi => pi.Id == updateImageDto.OldImageId)
+                .Where(pi => pi.Id == updateImageDto.OldImageId && pi.Product.StoreId==StoreId)
                 .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.ImageLink, updateImageDto.NewImageLink));
 
             return NumberOfRowsAffected > 0;
