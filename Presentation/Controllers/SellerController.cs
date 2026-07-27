@@ -33,7 +33,7 @@ namespace Presentation.Controllers
 
         [Authorize(Policy ="PersonRole")]
         [HttpGet("info/auth")]
-        [EnableRateLimiting("fixed-5-per-15min-ip")]
+        [EnableRateLimiting("fixed-10-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -67,7 +67,7 @@ namespace Presentation.Controllers
 
         [Authorize(Policy = "PersonRole")]
         [HttpPost("info/initial")]
-        [EnableRateLimiting("fixed-5-per-15min-ip")]
+        [EnableRateLimiting("fixed-10-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

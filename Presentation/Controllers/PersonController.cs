@@ -4,6 +4,7 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 namespace Presentation.Controllers
@@ -24,6 +25,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("login")]
+        [EnableRateLimiting("fixed-10-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -50,6 +52,7 @@ namespace Presentation.Controllers
 
         [Authorize(Policy = "PersonRole")]
         [HttpPut("activate")]
+        [EnableRateLimiting("fixed-10-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -71,6 +74,7 @@ namespace Presentation.Controllers
         }
 
         [HttpPost("register")]
+        [EnableRateLimiting("fixed-10-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -96,6 +100,7 @@ namespace Presentation.Controllers
 
 
         [HttpPost("token/reffresh")]
+        [EnableRateLimiting("fixed-10-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -113,7 +118,7 @@ namespace Presentation.Controllers
             if (person == null)
                 return Forbid("Token is not valid");
 
-            var tokenDto = await _authService.CreateToken(person.SysId, person.SysId, eUserTypes.Person.ToString());
+            var tokenDto = _authService.CreateAuthTokenOnly(person.SysId, person.SysId, eUserTypes.Person.ToString());
 
             Response.Cookies.Append("AuthToken", tokenDto.AuthToken, new CookieOptions()
             {

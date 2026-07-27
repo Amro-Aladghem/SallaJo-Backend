@@ -8,7 +8,7 @@ namespace SallaJo.Extentions
         {
             services.AddRateLimiter(options =>
             {
-                options.AddPolicy("fixed-5-per-15min-ip", httpContext =>
+                options.AddPolicy("fixed-10-per-15min-ip", httpContext =>
                 {
                     string key = "";
                     var endpointName = httpContext.GetEndpoint()?.DisplayName ?? "unknown";
@@ -31,7 +31,7 @@ namespace SallaJo.Extentions
                         partitionKey: key,
                         factory: _ => new FixedWindowRateLimiterOptions
                         {
-                            PermitLimit = 5,
+                            PermitLimit = 10,
                             Window = TimeSpan.FromMinutes(15),
                             QueueLimit = 0,
                             QueueProcessingOrder = QueueProcessingOrder.OldestFirst

@@ -83,7 +83,17 @@ namespace Application.Services
             };
         }
 
-        
+        public TokenDto CreateAuthTokenOnly(Guid PersonId, Guid UserId, string Role, Guid? StoreId = null)
+        {
+            string authToken = CreateAuthToken(UserId, Role, StoreId);
+
+            return new TokenDto()
+            {
+                AuthToken = authToken,
+            };
+        }
+
+
 
     }
 }
