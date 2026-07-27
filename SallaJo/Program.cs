@@ -1,15 +1,18 @@
 using Application.Common.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using SallaJo.MiddleWares;
-using System.Text;
-using FluentValidation;
-using System.Reflection;
 using Application.Services;
+using FluentValidation;
 using Infrastructure.Data;
-using Npgsql;
-using Microsoft.EntityFrameworkCore;
 using Infrastructure.ExternalServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Npgsql;
+using SallaJo.Extentions;
+using SallaJo.MiddleWares;
+using System.Reflection;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.RateLimiting;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -52,6 +55,7 @@ builder.Services.AddScoped<StoreService>();
 builder.Services.AddScoped<OfferProductService>();
 builder.Services.AddScoped<ActivationCodeService>();
 
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration["SQL_CONNECTION_STRING"]);
@@ -69,6 +73,9 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("seller", "Seller");
     });
 });
+
+
+builder.Services.SetRateLimiters();
 
 
 builder.Services.AddCors(options =>

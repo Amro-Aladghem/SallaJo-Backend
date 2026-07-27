@@ -3,6 +3,7 @@ using Infrastructure.ExternalServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,6 +34,7 @@ namespace Presentation.Controllers
         }
 
         [Authorize(Policy = "SellerRole")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
         [HttpPost("upload/image")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -52,6 +54,9 @@ namespace Presentation.Controllers
 
             if (imageFile is not null)
             {
+                if (imageFile.Length > 3 * 1024 * 1024) //3mb
+                    return BadRequest("Image size must be less than 3mb");
+
                 using (var stream = imageFile.OpenReadStream())
                 {
                     UploadedImageUrl = await _blobStorageUploadService.UploadAsync(stream, imageFile.FileName, UserId.Value);

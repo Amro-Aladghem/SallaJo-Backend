@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.DTOs.AuthDto;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Security.Claims;
 
 
 namespace Presentation.Controllers
@@ -38,6 +40,25 @@ namespace Presentation.Controllers
 
                 return null;
             }
+        }
+
+        protected void SetSellerTokens(string AuthToken,string ReffreshToken)
+        {
+            Response.Cookies.Append("AuthToken", AuthToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddHours(7)
+            });
+
+            Response.Cookies.Append("reffreshToken", ReffreshToken, new CookieOptions()
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
         }
     }
 }

@@ -5,6 +5,7 @@ using Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ namespace Presentation.Controllers
 
         [Authorize(Policy ="PersonRole")]
         [HttpGet("info/auth")]
+        [EnableRateLimiting("fixed-5-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,27 +60,14 @@ namespace Presentation.Controllers
             var tokenDto = await _authService.CreateToken(seller.PersonId, seller.Id, eUserTypes.Seller.ToString()
                 ,StoreId);
 
-            Response.Cookies.Append("AuthToken", tokenDto.AuthToken, new CookieOptions()
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddHours(7)
-            });
-
-            Response.Cookies.Append("reffreshToken", tokenDto.ReffreshToken, new CookieOptions()
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddDays(7)
-            });
+            SetSellerTokens(tokenDto.AuthToken, tokenDto.ReffreshToken);
 
             return Ok(seller);
         }
 
         [Authorize(Policy = "PersonRole")]
         [HttpPost("info/initial")]
+        [EnableRateLimiting("fixed-5-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
