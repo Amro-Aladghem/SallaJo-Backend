@@ -96,6 +96,16 @@ namespace Presentation.Controllers
             return Ok(store);
         }
 
+        [HttpGet("active")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> GetActiveStoreSlugs()
+        {
+            var slugs = await _storeService.GetActiveStoreSlugs();
+            return Ok(slugs);
+        }
+
         [HttpGet("{slug}")]
         [EnableRateLimiting("fixed-150-per-1h-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]

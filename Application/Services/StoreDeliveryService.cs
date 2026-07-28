@@ -1,11 +1,7 @@
 ﻿using Application.DTOs.StoreDeliveryDto;
+using Domain.Entities;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Application.Services
 {
@@ -33,5 +29,24 @@ namespace Application.Services
             return storeDeliveryDtos;
         }
 
+        public async Task<bool> SetStoreDeliveries(Guid storeId, List<StoreDeliveryDto> storeDeliveryDtos)
+        {
+            List<StoreDelivery> storeDeliveries = new List<StoreDelivery>();
+
+            storeDeliveryDtos.ForEach(s =>
+            {
+                storeDeliveries.Add(new StoreDelivery()
+                {
+                    StoreId = storeId,
+                    GovernorateId = s.GovernorateId,
+                    Amount = s.Amount,
+                    IsDelivered = s.IsDelivery,
+                });
+            });
+
+            await _appDbContext.StoreDeliveries.AddRangeAsync(storeDeliveries);
+
+            return await _appDbContext.SaveChangesAsync() > 0;
+        }
     }
 }

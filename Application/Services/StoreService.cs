@@ -157,6 +157,17 @@ namespace Application.Services
                 .FirstOrDefaultAsync();
         }
 
+        public async Task<List<string>> GetActiveStoreSlugs()
+        {
+            return await _appDbContext.Stores
+                .Where(s => s.IsActivatedStore == true
+                    && s.Slug != null
+                    && s.Slug != ""
+                    && !s.Slug.StartsWith("temp"))
+                .Select(s => s.Slug!)
+                .ToListAsync();
+        }
+
         public async Task<Guid> GetStoreIdBySellerId(Guid SellerId)
         {
             Guid StoreId = await _appDbContext.Stores.Where(S => S.SellerId == SellerId)
@@ -174,6 +185,16 @@ namespace Application.Services
                 .FirstAsync();
 
             return Id;
+        }
+
+        public async Task<bool> ActivateStoreSubscriptionByAdmin(ActivateStoreByAdminDto activateStoreByAdminDto)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Stores.Where(S => S.Id == activateStoreByAdminDto.StoreId)
+                .ExecuteUpdateAsync(sp => sp
+                .SetProperty(p => p.IsHasDelivery, activateStoreByAdminDto.IsHasDelivery)
+                .SetProperty(p => p.Slug, activateStoreByAdminDto.slug));
+
+            return NumberOfRowsAffected > 0;
         }
     }
 }
