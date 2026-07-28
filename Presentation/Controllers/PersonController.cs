@@ -37,7 +37,7 @@ namespace Presentation.Controllers
             if (person == null)
                 return Unauthorized(new { message = "كلمة السر او رقم الهاتف غير صحيح" });
 
-            TokenDto tokenDto = await _authService.CreateToken(person.SysId, person.SysId, eUserTypes.Person.ToString());
+            TokenDto tokenDto = await _authService.CreateToken(person.SysId, person.SysId, ((eUserTypes)person.UserTypeId).ToString());
 
             Response.Cookies.Append("AuthToken", tokenDto.AuthToken, new CookieOptions()
             {

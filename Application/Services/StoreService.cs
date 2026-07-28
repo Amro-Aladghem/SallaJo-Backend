@@ -103,7 +103,8 @@ namespace Application.Services
                     CountryId = s.CountryId,
                     Slug = s.Slug,
                     IsCompletedStoreProfile = s.IsCompletedStoreProfile,
-                    IsAcceptedToShowStoke = s.IsAcceptedToShowStoke
+                    IsAcceptedToShowStoke = s.IsAcceptedToShowStoke,
+                    IsHasDelivery=s.IsHasDelivery
                 })
                 .FirstOrDefaultAsync();
         }
@@ -129,7 +130,8 @@ namespace Application.Services
                     WelcomeHeaderText = s.WelcomeHeaderText,
                     PrimaryColorCode = s.PrimaryColor.Code ?? PrimaryColorHexCode,
                     SecondaryColorCoded = s.SecondaryColor.Code ?? PrimaryColorHexCode,
-                    IsAcceptedToShowStoke=s.IsAcceptedToShowStoke
+                    IsAcceptedToShowStoke=s.IsAcceptedToShowStoke,
+                    IsHasDelivery=s.IsHasDelivery
                 })
                 .FirstOrDefaultAsync();
         }
@@ -149,9 +151,21 @@ namespace Application.Services
                     FacebookLink = s.FacebookLink,
                     InstagramLink = s.InstagramLink,
                     CountryId = s.CountryId,
-                    Slug = s.Slug
+                    Slug = s.Slug,
+                    IsHasDelivery=s.IsHasDelivery
                 })
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<string>> GetActiveStoreSlugs()
+        {
+            return await _appDbContext.Stores
+                .Where(s => s.IsActivatedStore == true
+                    && s.Slug != null
+                    && s.Slug != ""
+                    && !s.Slug.StartsWith("temp"))
+                .Select(s => s.Slug!)
+                .ToListAsync();
         }
 
         public async Task<Guid> GetStoreIdBySellerId(Guid SellerId)
@@ -171,6 +185,16 @@ namespace Application.Services
                 .FirstAsync();
 
             return Id;
+        }
+
+        public async Task<bool> ActivateStoreSubscriptionByAdmin(ActivateStoreByAdminDto activateStoreByAdminDto)
+        {
+            int NumberOfRowsAffected = await _appDbContext.Stores.Where(S => S.Id == activateStoreByAdminDto.StoreId)
+                .ExecuteUpdateAsync(sp => sp
+                .SetProperty(p => p.IsHasDelivery, activateStoreByAdminDto.IsHasDelivery)
+                .SetProperty(p => p.Slug, activateStoreByAdminDto.slug));
+
+            return NumberOfRowsAffected > 0;
         }
     }
 }

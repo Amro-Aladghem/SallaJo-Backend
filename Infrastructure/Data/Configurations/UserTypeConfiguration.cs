@@ -13,6 +13,7 @@ public class UserTypeConfiguration : IEntityTypeConfiguration<UserType>
         {
             new { Id = 1,Name="Person" },
             new {Id=2,Name="Seller"},
+            new {Id=3,Name="Admin"}
         } );
     }
 }

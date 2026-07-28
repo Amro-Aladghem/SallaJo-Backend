@@ -54,6 +54,7 @@ builder.Services.AddScoped<OfferService>();
 builder.Services.AddScoped<StoreService>();
 builder.Services.AddScoped<OfferProductService>();
 builder.Services.AddScoped<ActivationCodeService>();
+builder.Services.AddScoped<StoreDeliveryService>();
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -72,6 +73,11 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireRole("seller", "Seller");
     });
+
+    options.AddPolicy("AdminRole", policy =>
+    {
+        policy.RequireRole("admin", "Admin");
+    });
 });
 
 
@@ -83,7 +89,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAll",
            policy =>
            {
-               policy.WithOrigins("http://localhost:5173")
+               policy.WithOrigins("http://localhost:5173", "https://sallahjo.taskalyze.com")
                      .AllowAnyMethod()
                      .AllowAnyHeader()
                      .AllowCredentials();

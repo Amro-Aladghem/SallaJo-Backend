@@ -36,3 +36,7 @@ TestResults/
 *.db
 *.sqlite
 *.sqlite3
+
+
+*.pubxml
+*.pubxml.user

@@ -53,9 +53,18 @@ namespace Application.Services
 
             return seller.Id;
         }
+        
+        //this function is prevent same person to create more than one seller object.
+        private async Task<bool> IsSellerHasRelationWithPersonId(Guid PersonId)
+        {
+            return await _appDbContext.Sellers.Where(S => S.PersonId == PersonId).AnyAsync();
+        }
 
         public async Task<Guid?> HandleCreateSellerForFirstTimeAsManager(Guid PersonId,AddInitialPersonInfoDto addInitialPersonInfoDto)
         {
+            if (await IsSellerHasRelationWithPersonId(PersonId))
+                return null;
+
             if (!await _personService.AddInitialPersonInfo(PersonId, addInitialPersonInfoDto))
                 return null;
 
