@@ -25,15 +25,18 @@ namespace Presentation.Controllers
         private readonly OfferService _offerService;
         private readonly ProductService _productService;
         private readonly DiscountService _discountService;
+        private readonly StoreDeliveryService _storeDeliveryService;
 
         public StoreController(BlobStorageUploadService storageUploadService, StoreService storeService,
-            OfferService offerService, ProductService productService, DiscountService discountService)
+            OfferService offerService, ProductService productService, DiscountService discountService, 
+            StoreDeliveryService storeDeliveryService)
         {
             _storageUploadService = storageUploadService;
             _storeService = storeService;
             _offerService = offerService;
             _productService = productService;
             _discountService = discountService;
+            _storeDeliveryService = storeDeliveryService;
         }
 
 
@@ -265,5 +268,16 @@ namespace Presentation.Controllers
             return Ok(discounts);
         }
 
+
+        [HttpGet("{slug}/deliveries")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<ActionResult> GetDeliveriesForStore(string Slug)
+        {
+            var deliveries = await _storeDeliveryService.GetStoreDeliveries(Slug);
+            return Ok(deliveries);
+        }
     }
 }

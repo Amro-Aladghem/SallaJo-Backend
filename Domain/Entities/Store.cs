@@ -20,10 +20,9 @@ public class Store
     public string? WelcomeHeaderText { get; set; } = null!;
     public string? CoverStoreImageLink { get; set; }
     public string? Slug { get; set; } = null!;
-
     public bool IsCompletedStoreProfile { get; set; }
-
     public bool IsAcceptedToShowStoke { get; set; }
+    public bool IsHasDelivery { get; set; }
 
     public Color PrimaryColor { get; set; }
     public Color SecondaryColor { get; set; }

@@ -103,7 +103,8 @@ namespace Application.Services
                     CountryId = s.CountryId,
                     Slug = s.Slug,
                     IsCompletedStoreProfile = s.IsCompletedStoreProfile,
-                    IsAcceptedToShowStoke = s.IsAcceptedToShowStoke
+                    IsAcceptedToShowStoke = s.IsAcceptedToShowStoke,
+                    IsHasDelivery=s.IsHasDelivery
                 })
                 .FirstOrDefaultAsync();
         }
@@ -129,7 +130,8 @@ namespace Application.Services
                     WelcomeHeaderText = s.WelcomeHeaderText,
                     PrimaryColorCode = s.PrimaryColor.Code ?? PrimaryColorHexCode,
                     SecondaryColorCoded = s.SecondaryColor.Code ?? PrimaryColorHexCode,
-                    IsAcceptedToShowStoke=s.IsAcceptedToShowStoke
+                    IsAcceptedToShowStoke=s.IsAcceptedToShowStoke,
+                    IsHasDelivery=s.IsHasDelivery
                 })
                 .FirstOrDefaultAsync();
         }
@@ -149,7 +151,8 @@ namespace Application.Services
                     FacebookLink = s.FacebookLink,
                     InstagramLink = s.InstagramLink,
                     CountryId = s.CountryId,
-                    Slug = s.Slug
+                    Slug = s.Slug,
+                    IsHasDelivery=s.IsHasDelivery
                 })
                 .FirstOrDefaultAsync();
         }

@@ -23,6 +23,7 @@ namespace Application.DTOs.StoreDto
 
         public int? CountryId { get; set; }
         public string? Slug { get; set; } = null!;
+        public bool IsHasDelivery { get; set; }
 
     }
 }

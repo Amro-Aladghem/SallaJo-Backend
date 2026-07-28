@@ -36,5 +36,6 @@ namespace Application.DTOs.StoreDto
         public bool IsCompletedStoreProfile { get; set; }
 
         public bool IsAcceptedToShowStoke { get; set; }
+        public bool IsHasDelivery { get; set; }
     }
 }
