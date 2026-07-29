@@ -17,10 +17,12 @@ namespace Presentation.Controllers
         private readonly StoreService _storeService;
         private readonly ActivationCodeService _activationCodeService;
 
-        public AdminController(StoreDeliveryService storeDeliveryService, StoreService storeService)
+        public AdminController(StoreDeliveryService storeDeliveryService, StoreService storeService,
+            ActivationCodeService activationCodeService)
         {
             _storeDeliveryService = storeDeliveryService;
             _storeService = storeService;
+            _activationCodeService = activationCodeService;
         }
 
         [HttpPost("stores/{storeId}/deliveries")]
