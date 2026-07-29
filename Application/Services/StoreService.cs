@@ -87,6 +87,7 @@ namespace Application.Services
                 .Where(s => s.Id == storeId)
                 .Select(s => new StoreInfoForSellerDto
                 {
+                    Id = s.Id,
                     Name = s.Name,
                     LogoImageUrl = s.LogoImageUrl!,
                     PrimaryColorId = s.PrimaryColorId ?? PrimaryColorId,
@@ -195,6 +196,15 @@ namespace Application.Services
                 .SetProperty(p => p.Slug, activateStoreByAdminDto.slug));
 
             return NumberOfRowsAffected > 0;
+        }
+
+        public async Task<Guid?> GetStoreIdWithPersonId (Guid PersonId)
+        {
+            Guid? Id = await _appDbContext.Stores.Where(S => S.Seller.Person.Id == PersonId)
+                .Select(s => s.Id)
+                .FirstOrDefaultAsync();
+
+            return Id;
         }
     }
 }

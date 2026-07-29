@@ -9,6 +9,7 @@ namespace Application.DTOs.StoreDto
 {
     public class StoreInfoForSellerDto
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
 
         public string LogoImageUrl { get; set; }

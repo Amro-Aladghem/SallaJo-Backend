@@ -78,6 +78,11 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireRole("admin", "Admin");
     });
+
+    options.AddPolicy("PersonOrSellerRole", policy =>
+    {
+        policy.RequireRole("person", "Person","seller","Seller");
+    });
 });
 
 

@@ -15,6 +15,7 @@ namespace Presentation.Controllers
     {
         private readonly StoreDeliveryService _storeDeliveryService;
         private readonly StoreService _storeService;
+        private readonly ActivationCodeService _activationCodeService;
 
         public AdminController(StoreDeliveryService storeDeliveryService, StoreService storeService)
         {
@@ -38,6 +39,26 @@ namespace Presentation.Controllers
         {
             var result = await _storeService.ActivateStoreSubscriptionByAdmin(activateStoreByAdminDto);
             return Ok(result);
+        }
+
+        [HttpPut("persons/{PersonId}/activate-code")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+
+        public async Task<ActionResult> CreateActivateCode(Guid PersonId)
+        {
+            Guid? storeId = await _storeService.GetStoreIdWithPersonId(PersonId);
+
+            if (storeId is null)
+                return NotFound($"No Store with PersonId:{PersonId}");
+
+            string? Code = await _activationCodeService.CreateActivationCodeForStore(storeId.Value);
+
+            if(Code is null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new {message="Failed to create activation code"});
+
+            return Ok(Code);
         }
     }
 }
