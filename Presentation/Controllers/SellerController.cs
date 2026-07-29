@@ -31,7 +31,7 @@ namespace Presentation.Controllers
             _storeService = storeService;
         }
 
-        [Authorize(Policy ="PersonRole")]
+        [Authorize(Policy = "PersonOrSellerRole")]
         [HttpGet("info/auth")]
         [EnableRateLimiting("fixed-10-per-15min-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
