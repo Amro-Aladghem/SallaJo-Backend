@@ -100,9 +100,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<GlobalExeptionMidlleWare>();
 
-app.UseCors("AllowAll");
-
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseMiddleware<JwtFromCookieMiddleware>();
 

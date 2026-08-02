@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.StoreDto;
 using Domain.Entities;
+using Domain.Enums;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -73,6 +74,7 @@ namespace Application.Services
                 .SetProperty(p => p.IsAcceptedToShowStoke, updateStoreInfoDto.IsAcceptedToShowStoke)
                 .SetProperty(p=>p.IsCompletedStoreProfile,true)
                 .SetProperty(p=>p.IsActivatedStore,true)
+                .SetProperty(p=>p.ContactTypeId,updateStoreInfoDto.ContactTypeId)
                 .SetProperty(p=>p.Slug,p=> p.Slug == null || p.Slug == ""
                 ? randomTempSlug
                 : p.Slug)
@@ -105,7 +107,8 @@ namespace Application.Services
                     Slug = s.Slug,
                     IsCompletedStoreProfile = s.IsCompletedStoreProfile,
                     IsAcceptedToShowStoke = s.IsAcceptedToShowStoke,
-                    IsHasDelivery=s.IsHasDelivery
+                    IsHasDelivery=s.IsHasDelivery,
+                    ContactTypeId= s.ContactTypeId ?? (int)eContactTypes.whatsapp
                 })
                 .FirstOrDefaultAsync();
         }
@@ -131,8 +134,9 @@ namespace Application.Services
                     WelcomeHeaderText = s.WelcomeHeaderText,
                     PrimaryColorCode = s.PrimaryColor.Code ?? PrimaryColorHexCode,
                     SecondaryColorCoded = s.SecondaryColor.Code ?? PrimaryColorHexCode,
-                    IsAcceptedToShowStoke=s.IsAcceptedToShowStoke,
-                    IsHasDelivery=s.IsHasDelivery
+                    IsAcceptedToShowStoke = s.IsAcceptedToShowStoke,
+                    IsHasDelivery = s.IsHasDelivery,
+                    ContactType = s.ContactTypeId != null ? s.ContactType.Name : eContactTypes.whatsapp.ToString()
                 })
                 .FirstOrDefaultAsync();
         }

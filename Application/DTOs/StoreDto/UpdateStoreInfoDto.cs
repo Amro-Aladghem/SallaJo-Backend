@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -40,5 +41,7 @@ namespace Application.DTOs.StoreDto
         public string? CoverStoreImageLink { get; set; }
 
         public bool IsAcceptedToShowStoke { get; set; }
+
+        public int ContactTypeId { get; set; } = (int)eContactTypes.whatsapp;
     }
 }

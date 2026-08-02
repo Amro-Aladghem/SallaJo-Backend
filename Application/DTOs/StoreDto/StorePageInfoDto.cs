@@ -25,5 +25,6 @@ namespace Application.DTOs.StoreDto
         public string? Slug { get; set; } = null!;
         public bool IsAcceptedToShowStoke { get; set; }
         public bool IsHasDelivery { get; set; }
+        public string ContactType { get;set; }
     }
 }

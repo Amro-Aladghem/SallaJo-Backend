@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -38,5 +39,6 @@ namespace Application.DTOs.StoreDto
 
         public bool IsAcceptedToShowStoke { get; set; }
         public bool IsHasDelivery { get; set; }
+        public int ContactTypeId { get; set; } = (int)eContactTypes.whatsapp;
     }
 }
