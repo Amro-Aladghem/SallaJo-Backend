@@ -23,6 +23,7 @@ public class Store
     public bool IsCompletedStoreProfile { get; set; }
     public bool IsAcceptedToShowStoke { get; set; }
     public bool IsHasDelivery { get; set; }
+    public int? ContactTypeId { get; set; }
 
     public Color PrimaryColor { get; set; }
     public Color SecondaryColor { get; set; }
@@ -32,4 +33,5 @@ public class Store
     public ICollection<Subscription> Subscriptions { get; set; } = new List<Subscription>();
     public ICollection<ActivationCode> ActivationCodes { get; set; } = new List<ActivationCode>();
     public Seller Seller { get; set; }
+    public ContactType ContactType { get; set; }
 }
