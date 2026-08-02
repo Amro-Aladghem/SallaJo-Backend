@@ -1,4 +1,6 @@
-﻿using System.Threading.RateLimiting;
+﻿using Application.Services;
+using Infrastructure.ExternalServices;
+using System.Threading.RateLimiting;
 
 namespace SallaJo.Extentions
 {
@@ -101,6 +103,23 @@ namespace SallaJo.Extentions
 
                 });
             });
+        }
+
+        public static void SetScopedServices(this IServiceCollection services)
+        {
+            services.AddScoped<PersonService>();
+            services.AddScoped<PasswordService>();
+            services.AddScoped<AuthService>();
+            services.AddScoped<SellerService>();
+            services.AddScoped<BlobStorageUploadService>();
+            services.AddScoped<ProductService>();
+            services.AddScoped<ImageProductService>();
+            services.AddScoped<DiscountService>();
+            services.AddScoped<OfferService>();
+            services.AddScoped<StoreService>();
+            services.AddScoped<OfferProductService>();
+            services.AddScoped<ActivationCodeService>();
+            services.AddScoped<StoreDeliveryService>();
         }
     }
 }
