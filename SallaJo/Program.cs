@@ -42,19 +42,7 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddValidatorsFromAssembly(typeof(Application.Validators.PersonAuthValidator).Assembly);
 
-builder.Services.AddScoped<PersonService>();
-builder.Services.AddScoped<PasswordService>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<SellerService>();
-builder.Services.AddScoped<BlobStorageUploadService>();
-builder.Services.AddScoped<ProductService>();
-builder.Services.AddScoped<ImageProductService>();
-builder.Services.AddScoped<DiscountService>();
-builder.Services.AddScoped<OfferService>();
-builder.Services.AddScoped<StoreService>();
-builder.Services.AddScoped<OfferProductService>();
-builder.Services.AddScoped<ActivationCodeService>();
-builder.Services.AddScoped<StoreDeliveryService>();
+builder.Services.SetScopedServices();
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -121,6 +109,8 @@ app.UseMiddleware<JwtFromCookieMiddleware>();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseRateLimiter();
 
 app.MapControllers();
 

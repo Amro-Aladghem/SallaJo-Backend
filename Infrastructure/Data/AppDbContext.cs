@@ -30,4 +30,5 @@ public class AppDbContext : DbContext
     public DbSet<Seller> Sellers { get; set; }
     public DbSet<OfferProduct> OfferProducts { get; set; }
     public DbSet<StoreDelivery> StoreDeliveries { get; set; }
+    public DbSet<ContactType> ContactTypes { get; set; }
 }
