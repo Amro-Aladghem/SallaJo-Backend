@@ -158,6 +158,41 @@ namespace Application.Services
             return await GetStoreProductsForListing(query, requestDto);
         }
 
+        public async Task<List<ProductSimpleInfoDto>> SearchProducts(string searchText, string? storeSlug)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+                return new List<ProductSimpleInfoDto>();
+
+            var now = DateTime.UtcNow;
+
+            var query = _appDbContext.Products
+                .Where(p => p.IsAcceptedToAppear == true && p.IsDeleted == false
+                    && EF.Functions.ILike(p.Name, $"%{searchText}%"));
+
+            if (!string.IsNullOrWhiteSpace(storeSlug))
+                query = query.Where(p => p.Store.Slug == storeSlug);
+
+            return await query
+                .OrderByDescending(p => p.SequenceNumber)
+                .Take(10)
+                .Select(p => new ProductSimpleInfoDto
+                {
+                    Id = p.Id,
+                    Name = p.Name,
+                    Price = p.Price,
+                    PrimaryImageLink = p.PrimaryImageLink,
+                    Description = p.Description.Substring(0, 50),
+                    Stock = p.Stock,
+                    SequenceProductNumber = p.SequenceNumber,
+                    AmountOfDiscount = p.Discounts.Where(d => d.IsActive == true
+                    && d.EndDate >= now)
+                    .OrderByDescending(d => d.StartDate)
+                    .Select(d => d.DiscountAmount)
+                    .FirstOrDefault()
+                })
+                .ToListAsync();
+        }
+
         public async Task<GetProductsPaginatedDto> GetStoreProductsForCustomer(GetProductsPaginatedRequestDto requestDto,string storeSlug)
         {
             var query = _appDbContext.Products
@@ -221,6 +256,36 @@ namespace Application.Services
 
                     if (!isDone)
                         throw new Exception("Failed to add product images");
+
+                    await transaction.CommitAsync();
+                    return true;
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> AddImageForProduct(Guid productId, AddProductImageDto addProductImageDto,
+            Guid StoreId)
+        {
+            await using (var transaction = await _appDbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    bool isDone = await _imageProductService.AddImageForProduct(productId, addProductImageDto.ImageUrl);
+
+                    if (!isDone)
+                        throw new Exception("Failed to add product image");
+
+                    int NumberOfRowsAffected = await _appDbContext.Products
+                        .Where(p => p.Id == productId && p.StoreId == StoreId)
+                        .ExecuteUpdateAsync(sp => sp.SetProperty(p => p.PrimaryImageLink, addProductImageDto.ImageUrl));
+
+                    if (NumberOfRowsAffected <= 0)
+                        throw new Exception("Failed to update product primary image");
 
                     await transaction.CommitAsync();
                     return true;

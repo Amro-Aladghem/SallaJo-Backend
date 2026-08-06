@@ -19,6 +19,18 @@ namespace Application.Services
             _appDbContext = appDbContext;
         }
 
+        public async Task<bool> AddImageForProduct(Guid ProductId, string ImageLink)
+        {
+            ProductImage productImage = new ProductImage()
+            {
+                ProductId = ProductId,
+                ImageLink = ImageLink
+            };
+
+            await _appDbContext.ProductImages.AddAsync(productImage);
+            return await _appDbContext.SaveChangesAsync() > 0;
+        }
+
         public async Task<bool> AddImagesForProduct(Guid ProductId, List<string> ImagesLinks)
         {
             List<ProductImage> productImages = new List<ProductImage>();
