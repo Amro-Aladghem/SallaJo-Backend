@@ -42,7 +42,7 @@ namespace Presentation.Controllers
             return Ok(new { result.Products, result.LastSequenceProductNumber });
         }
 
-        [HttpGet("{id}/public")]
+[HttpGet("{id}/public")]
         [EnableRateLimiting("fixed-150-per-1h-ip")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -55,6 +55,17 @@ namespace Presentation.Controllers
                 return NotFound();
 
             return Ok(product);
+        }
+
+        [HttpGet("search")]
+        [EnableRateLimiting("fixed-150-per-1h-ip")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult> SearchProducts([FromQuery] string searchText, [FromQuery] string? storeSlug)
+        {
+            var products = await _productService.SearchProducts(searchText, storeSlug);
+
+            return Ok(products);
         }
 
         [Authorize(Policy = "SellerRole")]
@@ -156,7 +167,7 @@ namespace Presentation.Controllers
             return Ok(isDone);
         }
 
-        [Authorize(Policy = "SellerRole")]
+[Authorize(Policy = "SellerRole")]
         [HttpPut("{id}/images")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -168,6 +179,22 @@ namespace Presentation.Controllers
                 return Unauthorized();
 
             bool isDone = await _productService.HandleUpdateProductImage(updateImageDto, id,StoreId.Value);
+
+            return Ok(isDone);
+        }
+
+        [Authorize(Policy = "SellerRole")]
+        [HttpPost("{id}/images")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult> AddImage(AddProductImageDto addProductImageDto, Guid id)
+        {
+            if (UserId is null || StoreId is null)
+                return Unauthorized();
+
+            bool isDone = await _productService.AddImageForProduct(id, addProductImageDto, StoreId.Value);
 
             return Ok(isDone);
         }
