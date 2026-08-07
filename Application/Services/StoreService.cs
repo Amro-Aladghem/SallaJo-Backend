@@ -33,7 +33,8 @@ namespace Application.Services
                 CountryId = 1,
                 IsCompletedStoreProfile = false,
                 LogoImageUrl = addInitialStoreInfoDto.LogoImageUrl,
-                IsActivatedStore=false
+                IsActivatedStore=false,
+                ContactTypeId = (int)eContactTypes.whatsapp
             };
 
             await _appDbContext.Stores.AddAsync(store);
