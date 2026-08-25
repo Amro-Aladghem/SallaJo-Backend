@@ -92,5 +92,14 @@ namespace Application.Services
 
             return isDone;
         }
+
+        public async Task<Guid?> GetPersonIdBySellerId(Guid SellerId)
+        {
+            Guid? PersonId = await _appDbContext.Sellers.Where(s => s.Id == SellerId)
+                .Select(p => p.PersonId)
+                .FirstOrDefaultAsync();
+
+            return PersonId;
+        }
     }
 }

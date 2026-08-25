@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Application.DTOs.AuthDto;
 using Microsoft.EntityFrameworkCore;
 using Domain.Enums;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Application.Services
 {
@@ -93,7 +94,16 @@ namespace Application.Services
             };
         }
 
+        public async Task<bool> DeleteReffreshToken(Guid PersonId)
+        {
+            string? nullableString = null;
 
+            int numberOfRowsAffected = await dbContext.Persons.Where(p=>p.Id==PersonId)
+                .ExecuteUpdateAsync(sp=>sp.SetProperty(p=>p.RefreshToken, nullableString));
 
+            return numberOfRowsAffected > 0;
+        }
+
+        
     }
 }
