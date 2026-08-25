@@ -16,12 +16,15 @@ namespace Presentation.Controllers
         private readonly PersonService _personService;
         private readonly AuthService _authService;
         private readonly StoreService _storeService;
+        private readonly SellerService _sellerService;
 
-        public PersonController(PersonService personService, AuthService authService, StoreService storeService)
+        public PersonController(PersonService personService, AuthService authService, StoreService storeService
+            , SellerService sellerService)
         {
             _personService = personService;
             _authService = authService;
             _storeService = storeService;
+            _sellerService = sellerService;
         }
 
         [HttpPost("login")]
@@ -129,6 +132,33 @@ namespace Presentation.Controllers
             });
 
             return Ok(person);
+        }
+
+        [Authorize(Policy = "SellerRole")]
+        [HttpPost("logout")]
+        [EnableRateLimiting("fixed-10-per-15min-ip")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+
+        public async Task<ActionResult> LogoutSeller()
+        {
+            if (UserId is null)
+                return Unauthorized();
+
+            Guid? PersonId = await _sellerService.GetPersonIdBySellerId(UserId.Value);
+
+            if (PersonId is null)
+                return NotFound("No User has been Found");
+
+            if (!await _authService.DeleteReffreshToken(PersonId.Value))
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Failed to delete token" });
+
+            Response.Cookies.Delete("reffreshToken");
+            Response.Cookies.Delete("AuthToken");
+
+            return Ok(true);
         }
     }
 }
